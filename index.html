@@ -201,7 +201,7 @@
   <main>
 <div class="page" id="page-home">
 <!-- 1) HERO -->
-<section class="relative isolate flex min-h-[560px] items-center overflow-hidden bg-ink bg-cover bg-center bg-no-repeat px-5 sm:px-8 lg:min-h-[640px] lg:px-10" style="background-image:url('C:/Users/이주영/Documents/해오름/main.jpg');">
+<section class="relative isolate flex min-h-[560px] items-center overflow-hidden bg-ink bg-cover bg-center bg-no-repeat px-5 sm:px-8 lg:min-h-[640px] lg:px-10" style="background-image:url('https://lh3.googleusercontent.com/d/1Yw2SeJPWR7sn1vtDJwiX9OBwF_9cLISp');">
   <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-ink/85 via-ink/60 to-ink/20"></div>
   <div class="mx-auto w-full max-w-container">
     <div class="flex max-w-2xl flex-col">
@@ -274,16 +274,16 @@
       </div>
       <!-- right 6-card grid -->
       <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-        <button type="button" onclick="showPage('mfg')" class="group rounded-xl2 bg-white p-7 sm:p-8 shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-1 hover:scale-[1.015] hover:shadow-lift text-left">
-          <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M4 15h16"/><path d="M6 19h12"/></svg>
-            </div>
-            <span class="text-xs font-medium uppercase tracking-eyebrow">그래놀라·시리얼</span>
-          </div>
-          <h3 class="mt-6 text-lg font-semibold text-ink">그래놀라·시리얼</h3>
-          <p class="mt-2 text-[15px] leading-relaxed text-ink-soft">유기농 오트밀 기반, 견과류·건과일 혼합</p>
-        </button>
+        <button type="button" onclick="showPage('mfg')" class="w-full group overflow-hidden rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-1 hover:scale-[1.015] hover:shadow-lift text-left">
+  <div class="aspect-[4/3] w-full overflow-hidden ring-1 ring-inset ring-neutral-200/60 bg-neutral-100">
+    <img src="https://lh3.googleusercontent.com/d/1opzre8hsVL2SC-liI68SKwIF2dHiwmeT=s0" alt="그래놀라·시리얼" class="h-full w-full object-cover transition-transform duration-500 ease-out-soft group-hover:scale-105" loading="lazy">
+  </div>
+  
+  <div class="p-7 sm:p-8 pt-6 sm:pt-6">
+    <h3 class="text-lg font-semibold text-ink">그래놀라·시리얼</h3>
+    <p class="mt-2 text-[15px] leading-relaxed text-ink-soft">유기농 오트밀 기반, 견과류·건과일 혼합</p>
+  </div>
+</button>
         <button type="button" onclick="showPage('mfg')" class="group rounded-xl2 bg-white p-7 sm:p-8 shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-1 hover:scale-[1.015] hover:shadow-lift text-left">
           <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
             <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
@@ -386,14 +386,10 @@
 <!-- 2) COMPANY INFO GRID -->
 <section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
   <div class="mx-auto w-full max-w-container">
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-px rounded-xl2 overflow-hidden bg-neutral-200 ring-1 ring-neutral-200">
+    <div class="grid grid-cols-2 lg:grid-cols-2 gap-px rounded-xl2 overflow-hidden bg-neutral-200 ring-1 ring-neutral-200">
       <div class="bg-white p-6 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">설립일</p>
         <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">2007년 1월</p>
-      </div>
-      <div class="bg-white p-6 sm:p-8">
-        <p class="text-[13px] font-medium text-ink-muted">대표자</p>
-        <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">김종완</p>
       </div>
       <div class="bg-white p-6 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">임직원</p>
@@ -405,11 +401,7 @@
       </div>
       <div class="bg-white p-6 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">고객사</p>
-        <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">100여 개사</p>
-      </div>
-      <div class="bg-white p-6 sm:p-8">
-        <p class="text-[13px] font-medium text-ink-muted">브랜드</p>
-        <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">Haeorum</p>
+        <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">28개사</p>
       </div>
     </div>
   </div>
@@ -529,7 +521,7 @@
     <div class="max-w-[70ch]">
       <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand">Partners</span>
       <h2 class="mt-5 text-ink font-bold tracking-[-0.03em] leading-[1.12] text-[1.625rem] sm:text-3xl lg:text-[2.75rem]">함께하는 거래처</h2>
-      <p class="mt-6 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[60ch]">ORGA, lukt, EDIYA COFFEE, Greek day, Knotted, 신세계, 마켓컬리, 쿠팡, 이마트, 올가, 우리밀, 디즈니홈 등 100여 개 브랜드·유통사에 납품하고 있습니다.</p>
+      <p class="mt-6 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[60ch]">ORGA, lukt, EDIYA COFFEE, Greek day, Knotted, 신세계, 마켓컬리, 쿠팡, 이마트, 올가, 우리밀, 디즈니홈 등 28 개 브랜드·유통사에 납품하고 있습니다.</p>
     </div>
     <div class="mt-12 lg:mt-16 space-y-4 sm:space-y-5">
       <div class="marquee overflow-hidden py-1">

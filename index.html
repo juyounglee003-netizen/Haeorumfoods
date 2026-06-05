@@ -56,6 +56,7 @@
           },
           maxWidth: {
             container: '1200px',
+            wide: '1440px',
           },
           transitionTimingFunction: {
             'out-soft': 'cubic-bezier(0.22, 1, 0.36, 1)',
@@ -66,37 +67,31 @@
   </script>
 
   <style>
-    /* Smooth view transitions between the 5 page views */
     [data-view] { animation: viewIn .42s cubic-bezier(0.22,1,0.36,1) both; }
     @keyframes viewIn {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Lock background scroll while the mobile overlay is open */
     body.nav-open { overflow: hidden; }
 
-    /* Refined, minimal scrollbar to match the premium aesthetic */
     html { scroll-behavior: smooth; }
     ::-webkit-scrollbar { width: 10px; height: 10px; }
     ::-webkit-scrollbar-track { background: #FAFBFC; }
     ::-webkit-scrollbar-thumb { background: #D4D7DD; border-radius: 9999px; border: 2px solid #FAFBFC; }
     ::-webkit-scrollbar-thumb:hover { background: #B4B8C0; }
 
-    /* FAQ / disclosure accordion (Contact view), pure CSS */
     details.faq > summary { list-style: none; cursor: pointer; }
     details.faq > summary::-webkit-details-marker { display: none; }
     details.faq > summary .faq-icon { transition: transform .3s cubic-bezier(0.22,1,0.36,1); }
     details.faq[open] > summary .faq-icon { transform: rotate(45deg); color: #F2611D; }
 
-    /* Respect reduced-motion preferences */
     @media (prefers-reduced-motion: reduce) {
       [data-view] { animation: none; }
       html { scroll-behavior: auto; }
       * { transition-duration: .01ms !important; }
     }
 
-    /* ── Tighter spacing between content sections ───────────────── */
     .page > section { padding-top: 2.5rem; padding-bottom: 2.5rem; }
     @media (min-width: 640px) {
       .page > section { padding-top: 3rem; padding-bottom: 3rem; }
@@ -105,27 +100,23 @@
       .page > section { padding-top: 4rem; padding-bottom: 4rem; }
     }
 
-    /* ── Compact hero sections (~2/3 of original height) ────────── */
-    .page > section:first-of-type { padding-top: 3rem; padding-bottom: 3rem; }
+    /* 메인 mega-hero를 제외한 일반 히어로 전용 세팅 */
+    .page > section:first-of-type:not(.mega-hero) { padding-top: 3rem; padding-bottom: 3rem; }
     @media (min-width: 640px) {
-      .page > section:first-of-type { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+      .page > section:first-of-type:not(.mega-hero) { padding-top: 3.5rem; padding-bottom: 3.5rem; }
     }
     @media (min-width: 1024px) {
-      .page > section:first-of-type { padding-top: 5rem; padding-bottom: 5rem; }
+      .page > section:first-of-type:not(.mega-hero) { padding-top: 5rem; padding-bottom: 5rem; }
     }
-    /* Shrink the hero split image so it no longer dominates the hero */
-    .page > section:first-of-type [class*="aspect-"] { aspect-ratio: 16 / 10; }
+    .page > section:first-of-type:not(.mega-hero) [class*="aspect-"] { aspect-ratio: 16 / 10; }
     @media (min-width: 1024px) {
-      .page > section:first-of-type [class*="aspect-"] { aspect-ratio: auto; height: 300px; }
+      .page > section:first-of-type:not(.mega-hero) [class*="aspect-"] { aspect-ratio: auto; height: 300px; }
     }
 
-    /* ── Word-break: wrap by word (no mid-word breaks), 한글 어절 단위 ── */
     body { word-break: keep-all; overflow-wrap: break-word; }
 
-    /* ── Line spacing 120% everywhere ───────────────────────────── */
     body, body * { line-height: 1.2 !important; }
 
-    /* ── Partner logo marquee (continuous flow) ─────────────────── */
     .marquee { -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
     .marquee-track { display: flex; width: max-content; animation: marquee-move 38s linear infinite; will-change: transform; }
     .marquee-track.rev  { animation-direction: reverse; }
@@ -136,92 +127,245 @@
       .marquee-track { animation: none; }
       .marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
     }
+
+    /* ── 신세계푸드 스타일 메인 비주얼 높이 오버라이드 ── */
+    .mega-hero {
+      position: relative;
+      min-height: 85vh;
+    }
+    @media (min-width: 1024px) {
+      .mega-hero { min-height: 100vh; }
+    }
+
+    /* 스크롤 다운 마우스 애니메이션 효과 */
+    @keyframes scrollMouse {
+      0% { opacity: 0; transform: translateY(0); }
+      50% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(8px); }
+    }
+    .animate-mouse { animation: scrollMouse 2s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
   </style>
 </head>
 <body class="bg-neutral-50 font-sans text-ink antialiased">
 
-  <!-- GLASS STICKY HEADER -->
-  <header class="sticky top-0 z-50 w-full border-b border-neutral-200/60 bg-white/70 backdrop-blur-nav backdrop-saturate-150 supports-[backdrop-filter]:bg-white/60 shadow-glass">
-    <nav class="mx-auto flex h-16 max-w-container items-center justify-between px-5 sm:px-8 lg:px-10">
-      <!-- LOGO (left) -->
-      <button type="button" onclick="showPage('home')" class="flex items-center" aria-label="㈜해오름식품 홈으로">
-        <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="h-9 w-auto">
-      </button>
+<!-- ============================================================
+     [수정] 상단 네비게이션 바 (각 메뉴 showPage 링크 정상 연동)
+     ============================================================ -->
+<header class="absolute top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/30 to-transparent backdrop-blur-[2px]">
+  <nav class="mx-auto flex h-14 lg:h-20 max-w-wide items-center justify-between px-6 sm:px-10 lg:px-16">
+    <!-- 로고 (클릭 시 홈으로 이동) -->
+    <button type="button" onclick="showPage('home')" class="flex items-center" aria-label="㈜해오름식품 홈으로">
+      <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="h-7 lg:h-10 w-auto brightness-0 invert">
+    </button>
 
-      <!-- DESKTOP LINK ROW (right) -->
-      <div class="hidden items-center gap-9 lg:flex">
-        <button type="button" id="nav-home" onclick="showPage('home')" class="relative text-[15px] font-medium text-ink-muted transition-colors duration-200 hover:text-ink">홈</button>
-        <button type="button" id="nav-about" onclick="showPage('about')" class="relative text-[15px] font-medium text-ink-muted transition-colors duration-200 hover:text-ink">회사소개</button>
-        <button type="button" id="nav-mfg" onclick="showPage('mfg')" class="relative text-[15px] font-medium text-ink-muted transition-colors duration-200 hover:text-ink">제조·개발 역량</button>
-        <button type="button" id="nav-quality" onclick="showPage('quality')" class="relative text-[15px] font-medium text-ink-muted transition-colors duration-200 hover:text-ink">품질·위생</button>
-        <button type="button" id="nav-contact" onclick="showPage('contact')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-light/50">Contact</button>
-      </div>
-
-      <!-- HAMBURGER BUTTON (mobile only) -->
-      <button type="button" id="hamburger" onclick="toggleDrawer()" aria-label="메뉴 열기" aria-controls="nav-drawer" aria-expanded="false" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-neutral-100 lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-          <line x1="3" y1="7" x2="21" y2="7"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="17" x2="21" y2="17"></line>
-        </svg>
-      </button>
-    </nav>
-  </header>
-
-  <!-- MOBILE FULL-SCREEN OVERLAY DRAWER -->
-  <div id="nav-drawer" role="dialog" aria-modal="true" aria-label="모바일 메뉴" aria-hidden="true" inert class="fixed inset-0 z-[60] flex flex-col bg-white/95 backdrop-blur-nav px-6 pb-10 pt-5 transition-all duration-300 ease-out-soft lg:hidden opacity-0 pointer-events-none translate-y-2">
-    <!-- OVERLAY TOP ROW -->
-    <div class="flex h-16 items-center justify-between">
-      <button type="button" onclick="showPage('home'); closeDrawer();" class="flex items-center" aria-label="㈜해오름식품 홈으로">
-        <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="h-9 w-auto">
-      </button>
-      <button type="button" onclick="closeDrawer()" aria-label="메뉴 닫기" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-neutral-100 lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-        </svg>
-      </button>
+    <!-- PC 버전 네비게이션 메뉴 (링크 복구 완료) -->
+    <div class="hidden items-center gap-10 lg:flex">
+      <button type="button" id="nav-home" onclick="showPage('home')" class="text-[16px] font-semibold transition-colors duration-200 relative after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-0 after:bg-brand after:transition-all hover:after:w-full" style="color:#e5e5e5">홈</button>
+      <button type="button" id="nav-about" onclick="showPage('about')" class="text-[16px] font-semibold transition-colors duration-200 relative after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-0 after:bg-brand after:transition-all hover:after:w-full" style="color:#e5e5e5">회사소개</button>
+      <button type="button" id="nav-mfg" onclick="showPage('mfg')" class="text-[16px] font-semibold transition-colors duration-200 relative after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-0 after:bg-brand after:transition-all hover:after:w-full" style="color:#e5e5e5">제조·개발 역량</button>
+      <button type="button" id="nav-quality" onclick="showPage('quality')" class="text-[16px] font-semibold transition-colors duration-200 relative after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-0 after:bg-brand after:transition-all hover:after:w-full" style="color:#e5e5e5">품질·위생</button>
+      <button type="button" id="nav-contact" onclick="showPage('contact')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">Contact</button>
     </div>
 
-    <!-- OVERLAY LINK LIST -->
-    <div class="mt-8 flex flex-1 flex-col justify-center gap-1">
-      <button type="button" id="dnav-home" onclick="showPage('home'); closeDrawer();" class="block w-full rounded-xl2 px-3 py-4 text-[1.75rem] font-bold tracking-tight text-ink transition-colors hover:bg-neutral-100 active:bg-neutral-100 text-left">홈</button>
-      <button type="button" id="dnav-about" onclick="showPage('about'); closeDrawer();" class="block w-full rounded-xl2 px-3 py-4 text-[1.75rem] font-bold tracking-tight text-ink transition-colors hover:bg-neutral-100 active:bg-neutral-100 text-left">회사소개</button>
-      <button type="button" id="dnav-mfg" onclick="showPage('mfg'); closeDrawer();" class="block w-full rounded-xl2 px-3 py-4 text-[1.75rem] font-bold tracking-tight text-ink transition-colors hover:bg-neutral-100 active:bg-neutral-100 text-left">제조·개발 역량</button>
-      <button type="button" id="dnav-quality" onclick="showPage('quality'); closeDrawer();" class="block w-full rounded-xl2 px-3 py-4 text-[1.75rem] font-bold tracking-tight text-ink transition-colors hover:bg-neutral-100 active:bg-neutral-100 text-left">품질·위생</button>
-    </div>
+    <!-- 모바일 햄버거 버튼 -->
+    <button type="button" id="hamburger" onclick="toggleDrawer()" aria-label="메뉴 열기" aria-controls="nav-drawer" aria-expanded="false" class="inline-flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 lg:hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+        <line x1="3" y1="7" x2="21" y2="7"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="17" x2="21" y2="17"></line>
+      </svg>
+    </button>
+  </nav>
+</header>
 
-    <!-- OVERLAY FOOTER -->
-    <div class="mt-auto w-full pt-6">
-      <button type="button" id="dnav-contact" onclick="showPage('contact'); closeDrawer();" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-light/50 w-full justify-center">Contact</button>
+<!-- 모바일 드로어 메뉴 -->
+<div id="nav-drawer"
+     class="fixed inset-0 z-40 flex flex-col justify-between bg-black/95 p-8 pt-24 text-white backdrop-blur-md transition-all duration-300 lg:hidden opacity-0 pointer-events-none translate-y-2"
+     aria-hidden="true" inert>
+  <div class="absolute top-[-10%] right-[-10%] -z-10 h-72 w-72 rounded-full bg-brand/20 blur-3xl"></div>
+  <nav class="flex flex-col gap-6 text-left">
+    <span class="text-xs font-bold uppercase tracking-widest text-white/40">Navigation</span>
+    <button type="button" onclick="closeDrawer(); showPage('home')" class="text-3xl font-bold tracking-tight text-white/80 transition-all hover:text-white hover:translate-x-2 text-left">홈</button>
+    <button type="button" onclick="closeDrawer(); showPage('about')" class="text-3xl font-bold tracking-tight text-white/80 transition-all hover:text-white hover:translate-x-2 text-left">회사소개</button>
+    <button type="button" onclick="closeDrawer(); showPage('mfg')" class="text-3xl font-bold tracking-tight text-white/80 transition-all hover:text-white hover:translate-x-2 text-left">제조·개발 역량</button>
+    <button type="button" onclick="closeDrawer(); showPage('quality')" class="text-3xl font-bold tracking-tight text-white/80 transition-all hover:text-white hover:translate-x-2 text-left">품질·위생</button>
+  </nav>
+  <div class="border-t border-white/10 pt-6 flex flex-col gap-4">
+    <div class="flex flex-col gap-1">
+      <span class="text-[11px] font-medium uppercase tracking-wider text-brand">Quick Contact</span>
+      <p class="text-sm text-white/60">사업 및 제조 문의가 있으신가요?</p>
     </div>
+    <button type="button" onclick="closeDrawer(); showPage('contact')" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-base font-bold text-white shadow-lg transition-transform active:scale-[0.98]">
+      Contact Us
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
   </div>
+</div>
 
   <!-- MAIN -->
   <main>
 <div class="page" id="page-home">
-<!-- 1) HERO -->
-<section class="relative isolate flex min-h-[560px] items-center overflow-hidden bg-ink bg-cover bg-center bg-no-repeat px-5 sm:px-8 lg:min-h-[640px] lg:px-10" style="background-image:url('https://lh3.googleusercontent.com/d/1Yw2SeJPWR7sn1vtDJwiX9OBwF_9cLISp');">
-  <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-ink/85 via-ink/60 to-ink/20"></div>
-  <div class="mx-auto w-full max-w-container">
-    <div class="flex max-w-2xl flex-col">
-      <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand-light">㈜해오름식품 · Since 2007</span>
-      <h1 class="mt-5 text-white font-bold tracking-tightest leading-[1.05] text-[2.125rem] sm:text-5xl lg:text-[4.25rem]">자연에서 온<br>먹거리</h1>
-      <p class="mt-6 text-white/80 text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">자연에서 온 원료를 체계적인 관리로 완성하는<br>식품 제조 파트너입니다.</p>
-      <div class="mt-9 flex flex-col sm:flex-row gap-3">
-        <button type="button" onclick="showPage('contact')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-[15px] font-semibold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-light/50">사업문의 하기</button>
-        <button type="button" onclick="showPage('mfg')" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-7 py-3.5 text-[15px] font-semibold text-white backdrop-blur-sm transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-white hover:bg-white/20 active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/30">제조 역량 보기</button>
+
+<!-- ============================================================
+     [수정] 1) MEGA HERO (콘텐츠와 좌측 정렬 라인을 완벽히 일치시킨 버전)
+     ============================================================ -->
+<section class="mega-hero flex w-full items-center overflow-hidden bg-ink relative" style="min-height: 75vh;">
+  
+  <!-- 좌우 슬라이드 트랙 -->
+  <div id="hero-slider-track" class="absolute inset-0 z-0 flex w-[200%] h-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]">
+    
+    <!-- 슬라이드 1 -->
+    <div class="w-1/2 h-full relative flex-shrink-0 flex items-center">
+      <img src="https://lh3.googleusercontent.com/d/1Yw2SeJPWR7sn1vtDJwiX9OBwF_9cLISp" alt="해오름식품 메인 비주얼 1" class="absolute inset-0 h-full w-full object-cover brightness-[0.45] contrast-[1.05]">
+      <div class="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-black/40"></div>
+      
+      <!-- 텍스트 1 -->
+      <div class="slide-content relative z-10 mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16 pt-20 pb-24">
+        <div class="max-w-3xl text-white">
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-eyebrow text-brand-light">Premium Food Solution Partner</span>
+          <h1 class="mt-4 text-3xl sm:text-5xl lg:text-[4.5rem] font-extrabold tracking-tightest leading-[1.1]">
+            자연의 신선함에<br>
+            기술을 더하다
+          </h1>
+          <p class="mt-5 text-sm sm:text-base lg:text-lg text-neutral-200/90 leading-relaxed max-w-xl">
+            엄선된 건강한 원료와 스마트 해썹(HACCP) 표준 자동화 공정을 통해, 글로벌 스탠다드 트렌드를 리드하는 최상의 프리미엄 푸드를 완성합니다.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <button type="button" onclick="showPage('mfg')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">
+              제조 역량 확인하기
+            </button>
+            <button type="button" onclick="showPage('about')" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 backdrop-blur-sm px-7 py-3.5 text-sm sm:text-base font-semibold text-white transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-white hover:bg-white/10">
+              회사 소개
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="mt-9 flex flex-wrap gap-2.5">
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-inset ring-white/15"><span class="h-1.5 w-1.5 rounded-full bg-brand-light"></span>HACCP 인증</span>
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-inset ring-white/15"><span class="h-1.5 w-1.5 rounded-full bg-brand-light"></span>유기가공식품 인증</span>
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-inset ring-white/15"><span class="h-1.5 w-1.5 rounded-full bg-brand-light"></span>벤처기업 인증</span>
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-inset ring-white/15"><span class="h-1.5 w-1.5 rounded-full bg-brand-light"></span>연구개발전담부서 인정</span>
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-inset ring-white/15"><span class="h-1.5 w-1.5 rounded-full bg-brand-light"></span>특허 2건 보유</span>
+    </div>
+
+    <!-- 슬라이드 2 -->
+    <div class="w-1/2 h-full relative flex-shrink-0 flex items-center">
+      <img src="https://lh3.googleusercontent.com/d/1dQmDUopMinIgcn_H_q3CMGUpprIwvF2Z" alt="해오름식품 메인 비주얼 2" class="absolute inset-0 h-full w-full object-cover brightness-[0.45] contrast-[1.05]">
+      <div class="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-black/40"></div>
+      
+      <!-- 텍스트 2 -->
+      <div class="slide-content relative z-10 mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16 pt-20 pb-24">
+        <div class="max-w-3xl text-white">
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-eyebrow text-brand-light">Strict Quality Control</span>
+          <h1 class="mt-4 text-3xl sm:text-5xl lg:text-[4.5rem] font-extrabold tracking-tightest leading-[1.1]">
+            까다로운 기준으로<br>
+            안전을 약속하다
+          </h1>
+          <p class="mt-5 text-sm sm:text-base lg:text-lg text-neutral-200/90 leading-relaxed max-w-xl">
+            철저한 위생 관리 체계와 완벽한 품질 검증 프로세스로 처음부터 끝까지 소비자가 믿고 먹을 수 있는 바른 먹거리를 제조합니다.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <button type="button" onclick="showPage('quality')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">
+              품질·위생 시스템 보기
+            </button>
+            <button type="button" onclick="showPage('about')" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 backdrop-blur-sm px-7 py-3.5 text-sm sm:text-base font-semibold text-white transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-white hover:bg-white/10">
+              회사 소개
+            </button>
+          </div>
+        </div>
       </div>
+    </div>
+
+  </div>
+
+  <!-- [구조 변경] 콘텐츠 컨테이너 영역과 정확히 일치시킨 인디케이터 포지셔닝 -->
+  <div class="absolute bottom-8 left-0 right-0 z-20 pointer-events-none">
+    <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16 flex items-center justify-between">
+      
+      <!-- 좌측 정렬 로딩 게이지 (클릭 가능하도록 pointer-events-auto 설정) -->
+      <div class="flex items-center gap-6 pointer-events-auto">
+        <!-- 01번 바 -->
+        <button type="button" onclick="setSlide(0)" class="group flex flex-col text-left focus:outline-none" aria-label="1번 슬라이드">
+          <span id="hero-num-0" class="text-xs font-bold text-white mb-1.5 transition-colors duration-300">01</span>
+          <div class="w-16 sm:w-24 h-[3px] bg-white/20 relative rounded-full overflow-hidden">
+            <div id="hero-progress-0" class="absolute top-0 left-0 h-full bg-white w-0 origin-left"></div>
+          </div>
+        </button>
+        
+        <!-- 02번 바 -->
+        <button type="button" onclick="setSlide(1)" class="group flex flex-col text-left focus:outline-none" aria-label="2번 슬라이드">
+          <span id="hero-num-1" class="text-xs font-bold text-white/40 mb-1.5 transition-colors duration-300">02</span>
+          <div class="w-16 sm:w-24 h-[3px] bg-white/20 relative rounded-full overflow-hidden">
+            <div id="hero-progress-1" class="absolute top-0 left-0 h-full bg-white w-0 origin-left"></div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 하단 우측 스크롤 인디케이터 (마우스 마크를 우측으로 보내 밸런스를 맞춤) -->
+      <div class="w-[18px] h-[28px] border-2 border-white/20 rounded-full flex justify-center p-0.5 hidden sm:flex">
+        <div class="w-[3px] h-[5px] bg-white/70 rounded-full animate-mouse"></div>
+      </div>
+
     </div>
   </div>
 </section>
+
+<!-- 스크립트는 기존과 동일 -->
+<script>
+  let currentSlide = 0;
+  const track = document.getElementById('hero-slider-track');
+  const totalSlides = 2;
+  let animationStartTime = 0;
+  let animationFrameId = null;
+
+  function updateProgress(timestamp) {
+    if (!animationStartTime) animationStartTime = timestamp;
+    const elapsed = timestamp - animationStartTime;
+    const progressPercent = Math.min((elapsed / 5000) * 100, 100);
+
+    for (let i = 0; i < totalSlides; i++) {
+      const progressBar = document.getElementById(`hero-progress-${i}`);
+      if (i === currentSlide) {
+        progressBar.style.width = `${progressPercent}%`;
+      } else {
+        progressBar.style.width = '0%';
+      }
+    }
+
+    if (elapsed < 5000) {
+      animationFrameId = requestAnimationFrame(updateProgress);
+    } else {
+      let next = (currentSlide + 1) % totalSlides;
+      showSlide(next);
+    }
+  }
+
+  function showSlide(index) {
+    const translateValue = index * -50;
+    track.style.transform = `translateX(${translateValue}%)`;
+    currentSlide = index;
+
+    for (let i = 0; i < totalSlides; i++) {
+      const numText = document.getElementById(`hero-num-${i}`);
+      const progressBar = document.getElementById(`hero-progress-${i}`);
+      if (i === index) {
+        numText.classList.remove('text-white/40');
+        numText.classList.add('text-white');
+      } else {
+        numText.classList.remove('text-white');
+        numText.classList.add('text-white/40');
+        progressBar.style.width = '0%';
+      }
+    }
+
+    animationStartTime = 0;
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    animationFrameId = requestAnimationFrame(updateProgress);
+  }
+
+  function setSlide(index) {
+    if (currentSlide === index) return;
+    showSlide(index);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    showSlide(0);
+  });
+</script>
 
 <!-- 2) STATS BAR -->
 <section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
@@ -356,29 +500,21 @@
 
 <div class="page hidden" id="page-about">
 <!-- 1) PAGE HERO -->
-<section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
-  <div class="mx-auto w-full max-w-container">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-      <div>
-        <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand">About Us</span>
-        <h1 class="mt-5 text-ink font-bold tracking-tightest leading-[1.05] text-[2.125rem] sm:text-5xl lg:text-[4.25rem]">28 개 고객사와<br>함께 성장해온<br>식품 제조 파트너</h1>
-        <p class="mt-7 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">2007년 설립 이후 20년 이상의 제조 경험을 바탕으로, 건강과 환경의 가치를 지키는 원칙으로 생산합니다. 규모의 과장 없이, 실제 납품 결과로 신뢰를 쌓아왔습니다.</p>
-        <div class="mt-9 flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <button type="button" onclick="showPage('contact')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-[15px] font-semibold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-light/50">
-            사업문의
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </button>
-          <button type="button" onclick="showPage('mfg')" class="inline-flex items-center justify-center gap-2 rounded-full border border-neutral-300 bg-white px-7 py-3.5 text-[15px] font-semibold text-ink transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-ink hover:shadow-soft active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-neutral-200">제조 역량 보기</button>
-        </div>
-      </div>
-      <div>
-        <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>
-          </div>
-          <span class="text-xs font-medium uppercase tracking-eyebrow">회사 대표 이미지</span>
-        </div>
-      </div>
+<section class="relative pt-52 sm:pt-40 lg:pt-44 pb-20 sm:pb-24 lg:pb-32 px-5 sm:px-8 lg:px-10 bg-cover bg-center bg-no-repeat text-white" style="background-image: url('https://lh3.googleusercontent.com/d/1sxUYUHAvlpfWMU1D8y7oTPD9uC_ER0de" alt="ambre-esteve-gd-Cwu-KCu-JWY-unsplash');">
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-container" style="padding-top: 20px;">
+    <div class="max-w-2xl text-left">
+      <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand-light">About Us</span>
+      <h1 class="mt-5 font-bold tracking-tightest leading-[1.05] text-[1.4rem] sm:text-3xl lg:text-[2.8rem]">
+        고객사와 함께 성장해온<br>
+        식품 제조 파트너
+      </h1>
+      <p class="mt-7 text-neutral-200 text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">
+        2007년 설립 이후 20년 이상의 제조 경험을 바탕으로, 건강과 환경의 가치를 지키는 원칙으로 생산합니다. 
+        규모의 과장 없이, 실제 납품 결과로 신뢰를 쌓아왔습니다.
+      </p>
+      
     </div>
   </div>
 </section>
@@ -386,20 +522,20 @@
 <!-- 2) COMPANY INFO GRID -->
 <section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
   <div class="mx-auto w-full max-w-container">
-    <div class="grid grid-cols-2 lg:grid-cols-2 gap-px rounded-xl2 overflow-hidden bg-neutral-200 ring-1 ring-neutral-200">
-      <div class="bg-white p-6 sm:p-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-px rounded-xl2 overflow-hidden bg-neutral-200 ring-1 ring-neutral-200">
+      <div class="bg-white p-5 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">설립일</p>
         <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">2007년 1월</p>
       </div>
-      <div class="bg-white p-6 sm:p-8">
+      <div class="bg-white p-5 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">임직원</p>
         <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">약 40명</p>
       </div>
-      <div class="bg-white p-6 sm:p-8">
+      <div class="bg-white p-5 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">주요사업</p>
         <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">식품 제조 및 도소매</p>
       </div>
-      <div class="bg-white p-6 sm:p-8">
+      <div class="bg-white p-5 sm:p-8">
         <p class="text-[13px] font-medium text-ink-muted">고객사</p>
         <p class="mt-2 text-lg sm:text-xl font-semibold text-ink tracking-[-0.02em]">28개사</p>
       </div>
@@ -412,8 +548,8 @@
   <div class="mx-auto w-full max-w-container">
     <div class="max-w-[60ch]">
       <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand">Values</span>
-      <h2 class="mt-5 text-ink font-bold tracking-[-0.03em] leading-[1.12] text-[1.625rem] sm:text-3xl lg:text-[2.75rem]">건강과 환경의<br>가치를 지키는<br>원칙으로 생산합니다</h2>
-      <p class="mt-6 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">해오름식품은 제품 하나하나에 건강, 환경, 그리고 소비자에 대한 책임을 담습니다.</p>
+      <h2 class="mt-5 text-ink font-bold tracking-[-0.03em] leading-[1.12] text-[1.625rem] sm:text-3xl lg:text-[2.75rem]">건강과 환경의 가치를 지키는<br>원칙으로 생산합니다</h2>
+      <p class="mt-6 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">해오름식품은 제품 하나하나에 건강, 환경, <br>그리고 소비자에 대한 책임을 담습니다.</p>
     </div>
     <div class="mt-12 lg:mt-16 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 lg:gap-7">
       <div class="group rounded-xl2 bg-white p-7 sm:p-8 shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-1 hover:scale-[1.015] hover:shadow-lift">
@@ -523,17 +659,14 @@
       <h2 class="mt-5 text-ink font-bold tracking-[-0.03em] leading-[1.12] text-[1.625rem] sm:text-3xl lg:text-[2.75rem]">함께하는 거래처</h2>
       <p class="mt-6 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[60ch]">ORGA, lukt, EDIYA COFFEE, Greek day, Knotted, 신세계, 마켓컬리, 쿠팡, 이마트, 올가, 우리밀, 디즈니홈 등 28 개 브랜드·유통사에 납품하고 있습니다.</p>
     </div>
-    <div class="mt-12 lg:mt-16 space-y-4 sm:space-y-5">
+<div class="mt-12 lg:mt-16 space-y-4 sm:space-y-5">
       <div class="marquee overflow-hidden py-1">
-        <div class="marquee-track"><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="ORGA / Whole Foods" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="lukt" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="EDIYA COFFEE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="Greek day." loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="Knotted." loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="SHINSEGAE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="Market Kurly" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="coupang" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="이마트" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div></div>
+        <div class="marquee-track"><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1uTImCpnf23OYieSkDQ-XpwyIcxXQmv1N" alt="ORGA / Whole Foods" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1Sgzt6yt71U_DvkKpNQLrFg6bMCtpBFhP" alt="lukt" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1pKhDKV7QfBPugDPmaVysY-esnsZ5CV7L" alt="EDIYA COFFEE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1vL7_v5u2MS4SzunE2fCPW_utofOll9MN" alt="Greek day." loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1PHmrdeI7A2g_TupS5Q62UFi6puo7M-LV" alt="Knotted." loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1Mz8BbWIfEtMvT0znl1tIWe1b9WC41eJx" alt="SHINSEGAE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1qTgLUY2y92rZ7TPWQJat1AyBkcxLhip7" alt="Market Kurly" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Coupang_logo.svg/3840px-Coupang_logo.svg.png" alt="coupang" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1e55hZKLsiOHhK4S6pSo1CMNa_dvzvmYW" alt="우리밀" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1tr86SvC_1hZL1V71Af6htt_T9UHOZBGw" alt="Disney HOME / Modern House" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://ecimg.cafe24img.com/pg1350b70588093061/hwaseon2020/web/upload/appfiles/ZaReJam3QiELznoZeGGkMG/749c2e00cfb20b67eea59581873e57ef.png" alt="mamanola" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://marocell.com/web/upload/category/logo/v2_bad0a5c474d4f66ad50edd60186ce5eb_1xMmivxYz_top.jpg" alt="MAROCELL" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://image.osulloc.com/kr/ko/static/v2/images/common/logo.webp" alt="OSULLOC" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1uTImCpnf23OYieSkDQ-XpwyIcxXQmv1N" alt="ORGA / Whole Foods" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1Sgzt6yt71U_DvkKpNQLrFg6bMCtpBFhP" alt="lukt" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1pKhDKV7QfBPugDPmaVysY-esnsZ5CV7L" alt="EDIYA COFFEE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1vL7_v5u2MS4SzunE2fCPW_utofOll9MN" alt="Greek day." loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1PHmrdeI7A2g_TupS5Q62UFi6puo7M-LV" alt="Knotted." loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1Mz8BbWIfEtMvT0znl1tIWe1b9WC41eJx" alt="SHINSEGAE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1qTgLUY2y92rZ7TPWQJat1AyBkcxLhip7" alt="Market Kurly" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Coupang_logo.svg/3840px-Coupang_logo.svg.png" alt="coupang" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="이마트" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1e55hZKLsiOHhK4S6pSo1CMNa_dvzvmYW" alt="우리밀" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1tr86SvC_1hZL1V71Af6htt_T9UHOZBGw" alt="Disney HOME / Modern House" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="	https://ecimg.cafe24img.com/pg1350b70588093061/hwa…ELznoZeGGkMG/749c2e00cfb20b67eea59581873e57ef.png" alt="mamnola" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://marocell.com/web/upload/category/logo/v2_bad0a5c474d4f66ad50edd60186ce5eb_1xMmivxYz_top.jpg" alt="MAROCELL" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://image.osulloc.com/kr/ko/static/v2/images/common/logo.webp" alt="OSULLOC" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div></div>
       </div>
       <div class="marquee overflow-hidden py-1">
-        <div class="marquee-track rev"><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="우리밀" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="Disney HOME / Modern House" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="LOTTE MART" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="MAROCELL" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="OSULLOC" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="Vivliv" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="백곡당" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="FOODMERCE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="OUR GANSIK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div></div>
+        <div class="marquee-track rev"><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1vRuBOeofUfYUW5h4NtE7IzItLXMZzpJT" alt="Vivliv" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1DNrXoK9MgCteisXO-fMRrlb5cdxvqD_Y" alt="FOODMERCE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/13e6LtGZnAqVkGyXmLGU6D6kB01qWcDhd" alt="OUR GANSIK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://grocerystuff.kr/img/gs_logo2.png" alt="GroceryStuff" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://www.huenic.com/web/upload/kdesign/logo02.png" alt="HUENIC" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://daoift3qrrnil.cloudfront.net/company_groups/images/000/000/276/original/ci_greenfood.png?1698998655" alt="HYUNDAI GREEN FOOD" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1vb8cSUVWkDDaWM0FOQFxW75Wy3z8ZHKu" alt="배민마트" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://ecimg.cafe24img.com/pg636b67546648003/lightit/web/upload/appfiles/ZaReJam3QiELznoZeGGkMG/01f1615bc37aae359d5a5a97a1da7374.png" alt="라잇" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1G8ymRFwsAU5IZr27GzjEf3XUNe_Sy6Bv" alt="Mediquitous" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1pIZ0GCNCrzNYxjFjCVmz37kNEdW-S1eR" alt="OLH GOK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/10fhTwergXL2pS6JBmhWB-0j39C_-oTBb" alt="JONI'S GROCERY" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="https://lh3.googleusercontent.com/d/1dCvoTWPeDZZozv9uvU-0I0LXMXDgBfDt" alt="DAL GREEK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1vRuBOeofUfYUW5h4NtE7IzItLXMZzpJT" alt="Vivliv" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1DNrXoK9MgCteisXO-fMRrlb5cdxvqD_Y" alt="FOODMERCE" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/13e6LtGZnAqVkGyXmLGU6D6kB01qWcDhd" alt="OUR GANSIK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://grocerystuff.kr/img/gs_logo2.png" alt="GroceryStruff" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://www.huenic.com/web/upload/kdesign/logo02.png" alt="HUENIC" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://daoift3qrrnil.cloudfront.net/company_groups/images/000/000/276/original/ci_greenfood.png?1698998655" alt="HYUNDAI GREEN FOOD" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1vb8cSUVWkDDaWM0FOQFxW75Wy3z8ZHKu" alt="배민마트" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://ecimg.cafe24img.com/pg636b67546648003/lightit/web/upload/appfiles/ZaReJam3QiELznoZeGGkMG/01f1615bc37aae359d5a5a97a1da7374.png" alt="라잇" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1G8ymRFwsAU5IZr27GzjEf3XUNe_Sy6Bv" alt="Mediquitous" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1pIZ0GCNCrzNYxjFjCVmz37kNEdW-S1eR" alt="OLH GOK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/10fhTwergXL2pS6JBmhWB-0j39C_-oTBb" alt="JONI'S GROCERY" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="https://lh3.googleusercontent.com/d/1dCvoTWPeDZZozv9uvU-0I0LXMXDgBfDt" alt="DAL GREEK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div></div>
       </div>
-      <div class="marquee overflow-hidden py-1">
-        <div class="marquee-track slow"><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="SuperNuts" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="HUENIC" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="HYUNDAI GREEN FOOD" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="배민마트" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="라잇" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="Mediquitous" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="OLH GOK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="JONI'S GROCERY" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4"><img src="logo.png" alt="DAL GREEK" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div><div class="group flex shrink-0 items-center justify-center rounded-2xl bg-white px-7 py-4 min-h-[72px] shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift mr-3 sm:mr-4" aria-hidden="true"><img src="logo.png" alt="" loading="lazy" class="h-8 w-auto max-w-[150px] object-contain grayscale opacity-70 transition-all duration-300 ease-out-soft group-hover:grayscale-0 group-hover:opacity-100"></div></div>
-      </div>
-      <!-- SUMMARY: 그 외 100여 개사 -->
+       <!-- SUMMARY: 그 외 100여 개사 -->
       <div class="mt-6 sm:mt-7 flex flex-col items-center justify-center gap-4 rounded-xl2 bg-gradient-to-r from-brand-pale via-brand-pale to-white p-7 sm:p-8 text-center shadow-soft ring-1 ring-brand-light/30 sm:flex-row sm:justify-center sm:gap-6 sm:text-left">
         <div class="flex items-baseline gap-0.5 text-brand">
           <span class="text-4xl sm:text-5xl font-bold tracking-tight">100</span>
@@ -553,38 +686,54 @@
 <section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
   <div class="mx-auto w-full max-w-container">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      
       <div class="sm:row-span-2 sm:col-span-1">
-        <div class="flex h-full min-h-[320px] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
-          </div>
-          <span class="text-xs font-medium uppercase tracking-eyebrow">공장 전경 / 외관</span>
+        <div class="relative overflow-hidden h-full min-h-[320px] w-full rounded-xl3 ring-1 ring-inset ring-neutral-200/60">
+          <img 
+            src="https://lh3.googleusercontent.com/d/1sxUYUHAvlpfWMU1D8y7oTPD9uC_ER0de" 
+            alt="공장 전경 / 외관" 
+            class="h-full w-full object-cover pointer-events-none"
+            loading="lazy"
+          />
         </div>
       </div>
-      <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 17h20"/><path d="M2 12h20"/><path d="M2 7h20"/><path d="M6 7v10"/><path d="M18 7v10"/></svg>
-        </div>
-        <span class="text-xs font-medium uppercase tracking-eyebrow">베이킹 라인</span>
+
+      <div class="relative overflow-hidden aspect-[4/3] w-full rounded-xl3 ring-1 ring-inset ring-neutral-200/60">
+        <img 
+          src="https://lh3.googleusercontent.com/d/1u1-UgXatOvoXS64gfFGR3Bgmbs6g-RXD" 
+          alt="베이킹 라인" 
+          class="h-full w-full object-cover pointer-events-none"
+          loading="lazy"
+        />
       </div>
-      <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg>
-        </div>
-        <span class="text-xs font-medium uppercase tracking-eyebrow">생산 현장</span>
+
+      <div class="relative overflow-hidden aspect-[4/3] w-full rounded-xl3 ring-1 ring-inset ring-neutral-200/60">
+        <img 
+          src="https://lh3.googleusercontent.com/d/1r2S9Hll_8_8TNB0o9eOVJSgOIq0-hNHv" 
+          alt="생산 현장" 
+          class="h-full w-full object-cover pointer-events-none"
+          loading="lazy"
+        />
       </div>
-      <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12 11 14 15 10"/><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/></svg>
-        </div>
-        <span class="text-xs font-medium uppercase tracking-eyebrow">위생 / 위생전실</span>
+
+      <div class="relative overflow-hidden aspect-[4/3] w-full rounded-xl3 ring-1 ring-inset ring-neutral-200/60">
+        <img 
+          src="https://lh3.googleusercontent.com/d/1yRJt6z41zJF8LSerxutnn2MzQnLZT_zt" 
+          alt="위생 / 위생전실" 
+          class="h-full w-full object-cover pointer-events-none"
+          loading="lazy"
+        />
       </div>
-      <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15V6a2 2 0 0 0-2-2H9"/><path d="m3 16 5-5"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
-        </div>
-        <span class="text-xs font-medium uppercase tracking-eyebrow">원료 / 제품 컷</span>
+
+      <div class="relative overflow-hidden aspect-[4/3] w-full rounded-xl3 ring-1 ring-inset ring-neutral-200/60">
+        <img 
+          src="https://lh3.googleusercontent.com/d/1r2S9Hll_8_8TNB0o9eOVJSgOIq0-hNHv" 
+          alt="원료 / 제품 컷" 
+          class="h-full w-full object-cover pointer-events-none"
+          loading="lazy"
+        />
       </div>
+
     </div>
   </div>
 </section>
@@ -592,40 +741,50 @@
 <!-- CTA BAND -->
 <section class="px-5 sm:px-8 lg:px-10 pb-20 sm:pb-24 lg:pb-32">
   <div class="mx-auto w-full max-w-container">
-    <div class="relative overflow-hidden rounded-xl3 bg-ink px-8 py-14 sm:px-12 sm:py-20 text-center text-white">
-      <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand/25 blur-3xl"></div>
-      <h2 class="relative text-white font-bold tracking-[-0.03em] text-[1.75rem] sm:text-4xl leading-tight">함께 성장할 파트너를 찾고 계신가요</h2>
-      <p class="relative mt-4 text-base sm:text-lg text-white/70">28개 고객사와 쌓아온 제조 경험으로, 다음 성장을 함께합니다.</p>
-      <div class="relative mt-9 flex justify-center">
-        <button type="button" onclick="showPage('contact')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-[15px] font-semibold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-light/50 w-full sm:w-auto">
-          사업문의
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </button>
+    <div class="relative overflow-hidden rounded-xl3 bg-ink h-[320px] sm:h-[365px] flex flex-col justify-center items-center px-6 sm:px-12 text-center text-white">
+      
+      <img 
+        src="https://lh3.googleusercontent.com/d/1I4UtnyZFyckdwTBcya_uSU3sUlhW9ffp" 
+        alt="파트너십 배경 비주얼" 
+        class="absolute inset-0 h-full w-full object-cover brightness-[0.35] contrast-[1.05] pointer-events-none"
+        loading="lazy"
+      />
+      
+      <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand/25 blur-3xl z-10"></div>
+      
+      <div class="relative z-10 w-full">
+        <h2 class="text-white font-bold tracking-[-0.03em] text-[1.75rem] sm:text-4xl leading-tight">함께 성장할 파트너를 찾고 계신가요</h2>
+        <p class="mt-4 text-base sm:text-lg text-white/70">28개 고객사와 쌓아온 제조 경험으로, 다음 성장을 함께합니다.</p>
+        <div class="mt-9 flex justify-center">
+          <button type="button" onclick="showPage('contact')" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 text-[15px] font-semibold text-white shadow-soft transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-light/50 w-full sm:w-auto">
+            사업문의
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </div>
       </div>
+
     </div>
   </div>
-</section>
 </div>
 
 <div class="page hidden" id="page-mfg">
 <!-- ============================================================
      1) PAGE HERO
      ============================================================ -->
-<section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
-  <div class="mx-auto w-full max-w-container">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-      <div>
-        <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand">Manufacturing &amp; Development</span>
-        <h1 class="mt-4 text-ink font-bold tracking-tightest leading-[1.05] text-[2.125rem] sm:text-5xl lg:text-[4.25rem]">제조·개발 역량</h1>
-        <hr class="mt-7 mx-0 h-0.5 w-12 rounded-full bg-brand border-0" />
-        <p class="mt-7 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">20년 이상의 노하우를 바탕으로 기획부터 완제품 납품까지 One-Stop Service를 제공합니다. 연구개발전담부서가 맛·건강성·양산성을 동시에 설계합니다.</p>
-      </div>
-      <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        </div>
-        <span class="text-xs font-medium uppercase tracking-eyebrow">생산 시설 이미지</span>
-      </div>
+<section class="relative pt-52 sm:pt-40 lg:pt-44 pb-20 sm:pb-24 lg:pb-32 px-5 sm:px-8 lg:px-10 bg-cover bg-center bg-no-repeat text-white" style="background-image: url('https://lh3.googleusercontent.com/d/1Yw2SeJPWR7sn1vtDJwiX9OBwF_9cLISpI4UtnyZFyckdwTBcya_uSU3sUlhW9ffp');">
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-container" style="padding-top: 20px;">
+    <div class="max-w-2xl text-left">
+      <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand-light">Manufacturing & Development</span>
+      <h1 class="mt-5 font-bold tracking-tightest leading-[1.05] text-[1.4rem] sm:text-3xl lg:text-[2.8rem]">
+        제조·개발 역량
+      </h1>
+      <p class="mt-7 text-neutral-200 text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">
+        20년 이상의 노하우를 바탕으로 기획부터 완제품 납품까지 One-Stop Service를 제공합니다. <br>
+        연구개발전담부서가 맛·건강성·양산성을 동시에 설계합니다.
+      </p>
+      
     </div>
   </div>
 </section>
@@ -1005,22 +1164,21 @@
 
 <div class="page hidden" id="page-quality">
 <!-- ============ PAGE HERO ============ -->
-<section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
-  <div class="mx-auto w-full max-w-container">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-      <div>
-        <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand">Quality &amp; Hygiene</span>
-        <h1 class="mt-5 text-ink font-bold tracking-tightest leading-[1.05] text-[2.125rem] sm:text-5xl lg:text-[4.25rem]">위생적인 환경에서<br>품질 높은 제품을<br>생산하고 있습니다.</h1>
-        <p class="mt-7 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">HACCP 인증을 기반으로 원료 입고에서 완제품 출하까지 전 공정에 걸쳐 위해요소 관리 체계를 운영합니다. 수치와 기록으로 증명하는 품질 관리를 원칙으로 합니다.</p>
-      </div>
-      <div class="w-full">
-        <div class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl3 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-150 text-ink-faint ring-1 ring-inset ring-neutral-200/60">
-          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-soft">
-            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
-          </div>
-          <span class="text-xs font-medium uppercase tracking-eyebrow">위생 현장 이미지</span>
-        </div>
-      </div>
+<section class="relative pt-52 sm:pt-40 lg:pt-44 pb-20 sm:pb-24 lg:pb-32 px-5 sm:px-8 lg:px-10 bg-cover bg-center bg-no-repeat text-white" style="background-image: url('https://lh3.googleusercontent.com/d/1I4UtnyZFyckdwTBcya_uSU3sUlhW9ffp');">
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-container" style="padding-top: 20px;">
+    <div class="max-w-2xl text-left">
+      <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand-light">Quality & Hygiene</span>
+      <h1 class="mt-5 font-bold tracking-tightest leading-[1.05] text-[1.4rem] sm:text-3xl lg:text-[2.8rem]">
+        위생적인 환경에서 <br>
+        품질 높은 제품을 생산하고 있습니다.
+      </h1>
+      <p class="mt-7 text-neutral-200 text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">
+        HACCP 인증을 기반으로 원료 입고에서 완제품 출하까지 전 공정에 걸쳐 위해요소 관리 체계를 운영합니다. <br>
+        수치와 기록으로 증명하는 품질 관리를 원칙으로 합니다.
+      </p>
+      
     </div>
   </div>
 </section>
@@ -1179,13 +1337,24 @@
 
 <div class="page hidden" id="page-contact">
 <!-- ============ PAGE HERO ============ -->
-<section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
-  <div class="mx-auto w-full max-w-container">
-    <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand">Contact Us</span>
-    <h1 class="mt-4 text-ink font-bold tracking-tightest leading-[1.05] text-[2.125rem] sm:text-5xl lg:text-[4.25rem]">사업문의</h1>
-    <p class="mt-6 text-ink-soft text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">해오름은 고객사 여러분의 성공을 위하여 최선을 다하겠습니다. OEM·ODM 제조, 신제품 개발, 협력 관련 문의를 남겨 주세요.</p>
+<section class="relative pt-52 sm:pt-40 lg:pt-44 pb-20 sm:pb-24 lg:pb-32 px-5 sm:px-8 lg:px-10 bg-cover bg-center bg-no-repeat text-white" style="background-image: url('https://lh3.googleusercontent.com/d/1I4UtnyZFyckdwTBcya_uSU3sUlhW9ffp');">
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-container" style="padding-top: 20px;">
+    <div class="max-w-2xl text-left">
+      <span class="inline-block text-[11px] sm:text-xs font-semibold uppercase tracking-eyebrow text-brand-light">Contact Us</span>
+      <h1 class="mt-5 font-bold tracking-tightest leading-[1.05] text-[1.4rem] sm:text-3xl lg:text-[2.8rem]">
+        사업문의
+      </h1>
+      <p class="mt-7 text-neutral-200 text-[15px] sm:text-base lg:text-lg leading-[1.7] max-w-[46ch]">
+       해오름은 고객사 여러분의 성공을 위하여 최선을 다하겠습니다. <br>
+        OEM·ODM 제조, 신제품 개발, 협력 관련 문의를 남겨 주세요.
+      </p>
+      
+    </div>
   </div>
 </section>
+
 
 <!-- ============ CONTACT MAIN ============ -->
 <section class="py-20 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-10">
@@ -1434,17 +1603,12 @@
             <p>대표이사: 김종완 &nbsp;|&nbsp; 사업자등록번호: 402-81-12345</p>
             <p>본사: 전북 익산시 왕궁면 푸드폴리스로 11길 52-8</p>
             <p>제2공장: 충남 논산시 노성면 논산평야로 1213</p>
-            <p>대표전화: 041-742-0093 &nbsp;|&nbsp; 이메일: ceo@haeoreum.biz</p>
+            <p>대표전화: 041-742-0093 &nbsp;|&nbsp; 이메일: horceo_g0@haeorum.biz</p>
           </div>
         </div>
-        <nav aria-label="푸터 링크" class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-neutral-300">
-          <a href="#" class="transition-colors hover:text-neutral-0">개인정보처리방침</a>
-          <a href="#" class="transition-colors hover:text-neutral-0">이용약관</a>
-          <a href="#" class="transition-colors hover:text-neutral-0">사업자정보 확인</a>
-        </nav>
       </div>
       <div class="mt-10 border-t border-white/10 pt-6">
-        <p class="text-xs text-ink-faint">© 2025 ㈜해오름식품. All rights reserved.</p>
+        <p class="text-xs text-ink-faint">© 2026 ㈜해오름식품. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -1453,8 +1617,8 @@
   <script>
     var PAGE_KEYS = ['home', 'about', 'mfg', 'quality', 'contact'];
 
-    var NAV_DEFAULT_DESKTOP = 'relative text-[15px] font-medium text-ink-muted transition-colors duration-200 hover:text-ink';
-    var NAV_ACTIVE_DESKTOP = 'relative text-[15px] font-semibold text-ink after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-brand';
+    var NAV_DEFAULT_DESKTOP = 'relative text-[15px] font-medium transition-colors duration-200';
+    var NAV_ACTIVE_DESKTOP = 'relative text-[15px] font-semibold after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-brand';
 
     var NAV_DEFAULT_DRAWER = 'block w-full rounded-xl2 px-3 py-4 text-[1.75rem] font-bold tracking-tight text-ink transition-colors hover:bg-neutral-100 active:bg-neutral-100 text-left';
     var NAV_ACTIVE_DRAWER = 'block w-full rounded-xl2 px-3 py-4 text-[1.75rem] font-bold tracking-tight text-brand transition-colors before:mr-3 before:inline-block before:h-2.5 before:w-2.5 before:rounded-full before:bg-brand before:align-middle text-left';
@@ -1479,6 +1643,7 @@
         var deskBtn = document.getElementById('nav-' + key);
         if (deskBtn && key !== 'contact') {
           deskBtn.className = (key === name) ? NAV_ACTIVE_DESKTOP : NAV_DEFAULT_DESKTOP;
+          deskBtn.style.color = '#e5e5e5';
         }
         var drawBtn = document.getElementById('dnav-' + key);
         if (drawBtn && key !== 'contact') {
@@ -1574,7 +1739,12 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', loadPageFromHash);
+    // 페이지 초기화 (DOMContentLoaded 이전에도 동작하도록 즉시 실행)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadPageFromHash);
+    } else {
+      loadPageFromHash();
+    }
     window.addEventListener('popstate', loadPageFromHash);
   </script>
 </body>

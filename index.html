@@ -62,6 +62,11 @@ header {
 .header-scrolled .nav-logo { filter: grayscale(1) brightness(0) !important; }
 .header-scrolled #hamburger { color: black !important; }
 .header-scrolled #nav-contact { color: white !important; }
+/* 고객지원 버튼 — 활성/비활성/스크롤 모든 상태에서 흰색 텍스트 유지 */
+#nav-contact,
+#nav-contact.nav-active,
+.header-scrolled #nav-contact,
+.header-scrolled #nav-contact.nav-active { color: white !important; }
 
 /* 활성화 상태 */
 .nav-active, .active-menu, .drawer-link.active-menu {
@@ -135,13 +140,14 @@ header {
       <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="nav-logo h-7 lg:h-9 w-auto brightness-0 invert">
     </button>
     <div class="hidden items-center gap-8 lg:flex">
-      <button type="button" id="nav-home"   onclick="showPage('home')"   class="nav-link text-[15px] font-semibold transition-colors">홈</button>
-      <button type="button" id="nav-about"  onclick="showPage('about')"  class="nav-link text-[15px] font-semibold transition-colors">회사소개</button>
-      <button type="button" id="nav-dev"    onclick="showPage('dev')"    class="nav-link text-[15px] font-semibold transition-colors">제품개발</button>
-      <button type="button" id="nav-oem"    onclick="showPage('oem')"    class="nav-link text-[15px] font-semibold transition-colors">OEM 제조</button>
-      <button type="button" id="nav-system" onclick="showPage('system')" class="nav-link text-[15px] font-semibold transition-colors">시스템 매니지먼트</button>
-      <button type="button" id="nav-contact" onclick="showPage('contact')" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">고객지원</button>
-    </div>
+  <!-- 각 버튼에 nav-link 클래스 유지, 필요시 data-page 속성 활용 -->
+  <button type="button" id="nav-home" onclick="showPage('home') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">홈</button>
+  <button type="button" id="nav-about" onclick="showPage('about') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">회사소개</button>
+  <button type="button" id="nav-dev" onclick="showPage('dev') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">제품개발</button>
+  <button type="button" id="nav-oem" onclick="showPage('oem') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">OEM 제조</button>
+  <button type="button" id="nav-system" onclick="showPage('system') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">시스템 매니지먼트</button>
+  <button type="button" id="nav-contact" onclick="showPage('contact') toggleDrawer();" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">고객지원</button>
+</div>
 
     <button type="button" id="hamburger" onclick="toggleDrawer()" aria-label="메뉴 열기" aria-expanded="false"
       class="inline-flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 lg:hidden">
@@ -171,12 +177,12 @@ header {
 
     <!-- 메뉴 버튼들 -->
     <div class="flex flex-col gap-10 items-center justify-center mt-10">
-  <button id="nav-mobile-home" onclick="showPage('home'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">홈</button>
-  <button id="nav-mobile-about" onclick="showPage('about'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">회사소개</button>
-  <button id="nav-mobile-dev" onclick="showPage('dev'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">제품개발</button>
-  <button id="nav-mobile-oem" onclick="showPage('oem'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">OEM 제조</button>
-  <button id="nav-mobile-system" onclick="showPage('system'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">시스템 매니지먼트</button>
-  <button id="nav-mobile-contact" onclick="showPage('contact'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">고객지원</button>
+  <button id="nav-mobile-home" onclick="showPage('home'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">홈</button>
+  <button id="nav-mobile-about" onclick="showPage('about'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">회사소개</button>
+  <button id="nav-mobile-dev" onclick="showPage('dev'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">제품개발</button>
+  <button id="nav-mobile-oem" onclick="showPage('oem'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">OEM 제조</button>
+  <button id="nav-mobile-system" button onclick="showPage('system'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">시스템 매니지먼트</button>
+  <button id="nav-mobile-contact" onclick="showPage('contact'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">고객지원</button>
 </div>
   </div>
 </div>
@@ -1857,6 +1863,7 @@ function showPage(name, push = true) {
   if (t) t.classList.remove('hidden');
 
   document.querySelectorAll('.nav-link, .drawer-link').forEach(el => el.classList.remove('nav-active'));
+  document.getElementById('nav-contact').classList.remove('nav-active');
   
   PAGE_KEYS.forEach(k => {
     if (k === name) {
@@ -1909,13 +1916,54 @@ function loadFromHash(){
 window.addEventListener('popstate', loadFromHash);
 document.addEventListener('DOMContentLoaded', loadFromHash);
 
+
+function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    drawer.classList.toggle('hidden');
+    // 메뉴 열릴 때 body 스크롤 방지
+    document.body.style.overflow = drawer.classList.contains('hidden') ? 'auto' : 'hidden';
+  }
+function openDrawer(){
+  lastFocused=document.activeElement;
+  var d=document.getElementById('nav-drawer');
+  d.classList.remove('opacity-0','pointer-events-none','translate-y-2');
+  d.classList.add('opacity-100','pointer-events-auto','translate-y-0');
+  d.removeAttribute('aria-hidden');d.removeAttribute('inert');
+  document.body.classList.add('nav-open');
+  document.getElementById('hamburger').setAttribute('aria-expanded','true');
+}
 function closeDrawer(){
-  var d = document.getElementById('nav-drawer');
-  if(!d) return;
+  var d=document.getElementById('nav-drawer');
   d.classList.add('opacity-0','pointer-events-none','translate-y-2');
   d.classList.remove('opacity-100','pointer-events-auto','translate-y-0');
+  d.setAttribute('aria-hidden','true');d.setAttribute('inert','');
   document.body.classList.remove('nav-open');
+  document.getElementById('hamburger').setAttribute('aria-expanded','false');
+  if(lastFocused&&lastFocused.focus)lastFocused.focus();
+  lastFocused=null;
 }
+
+function handleNavClick(pageId) {
+    // 1. 페이지 전환
+    showPage(pageId);
+    
+    // 2. 모바일 드로어가 열려있다면 닫기 (모바일/데스크톱 공통 사용 시)
+    if (typeof closeDrawer === 'function') {
+        closeDrawer();
+    }
+    
+    // 3. (선택사항) 활성화된 메뉴 스타일 변경
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('text-brand'); // 활성 스타일 제거
+    });
+    const clickedBtn = document.getElementById('nav-' + pageId);
+    if (clickedBtn) {
+        clickedBtn.classList.add('text-brand'); // 활성 스타일 추가
+    }
+}
+document.addEventListener('keydown', function(e){
+  if((e.key==='Escape'||e.key==='Esc')) closeDrawer();
+});
 </script>
 </body>
 </html>

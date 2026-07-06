@@ -29,100 +29,122 @@
       },
     }
   </script>
-  <style>
-    body { word-break:keep-all; overflow-wrap:break-word; }
-    body.nav-open { overflow:hidden; }
-    html { scroll-behavior:smooth; }
-    ::-webkit-scrollbar { width:8px; }
-    ::-webkit-scrollbar-track { background:#FAFBFC; }
-    ::-webkit-scrollbar-thumb { background:#D4D7DD; border-radius:9999px; border:2px solid #FAFBFC; }
+<style>
+  /* 기본 설정 및 스크롤바 */
+  html { scroll-behavior: smooth; }
+  body { word-break: keep-all; overflow-wrap: break-word; }
+  body.nav-open { overflow: hidden; }
+  
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #FAFBFC; }
+  ::-webkit-scrollbar-thumb { background: #D4D7DD; border-radius: 9999px; border: 2px solid #FAFBFC; }
 
-/* 마퀴 */
-    .marquee { -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
-    /* 파트너 섹션 — 페이지 좌우 여백(px)에 정확히 맞춘 페이드 */
-    .marquee-partner { -webkit-mask-image: linear-gradient(to right, transparent 0px, transparent 20px, #000 120px, #000 calc(100% - 120px), transparent calc(100% - 20px), transparent 100%); mask-image: linear-gradient(to right, transparent 0px, transparent 20px, #000 120px, #000 calc(100% - 120px), transparent calc(100% - 20px), transparent 100%); }
-    @media(min-width:640px)  { .marquee-partner { -webkit-mask-image: linear-gradient(to right, transparent 0px, #000 160px, #000 calc(100% - 160px), transparent 100%); mask-image: linear-gradient(to right, transparent 0px, #000 160px, #000 calc(100% - 160px), transparent 100%); } }
-    @media(min-width:1024px) { .marquee-partner { -webkit-mask-image: linear-gradient(to right, transparent 0px, #000 220px, #000 calc(100% - 220px), transparent 100%); mask-image: linear-gradient(to right, transparent 0px, #000 220px, #000 calc(100% - 220px), transparent 100%); } }
-    .marquee-track { display: flex; width: max-content; animation: marquee-move 38s linear infinite; animation-fill-mode: forwards; will-change: transform; }
-    .marquee-track.rev  { animation-name: marquee-move-rev; }
-    .marquee-track.slow { animation-duration: 52s; }
-    /* hover pause 제거 */
-    @keyframes marquee-move { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    @keyframes marquee-move-rev { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-    @media (prefers-reduced-motion: reduce) {
-      .marquee-track { animation: none; }
-      .marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
-    }
+/* 네비게이션 바 고정 스타일 */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  transition: transform 0.3s ease-out !important; /* 스크롤 애니메이션 필수 */
+  z-index: 50;
+}
 
+.nav-link, #hamburger { color: white; transition: color 0.3s; }
 
-    /* 히어로 슬라이드 마우스 애니 */
-    @keyframes scrollMouse { 0%{opacity:0;transform:translateY(0)} 50%{opacity:1} 100%{opacity:0;transform:translateY(8px)} }
-    .animate-mouse { animation:scrollMouse 2s cubic-bezier(0.22,1,0.36,1) infinite; }
+.header-scrolled {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05) !important;
+}
 
-    /* 개발 플로 화살표 */
-    .flow-arrow { position:relative; }
-    .flow-arrow:not(:last-child)::after {
-      content:''; position:absolute; top:50%; right:-1px;
-      transform:translateY(-50%);
-      width:0; height:0;
-      border-top:10px solid transparent; border-bottom:10px solid transparent;
-      border-left:14px solid #F2611D; z-index:10;
-    }
-    @media(max-width:767px){
-      .flow-arrow:not(:last-child)::after {
-        top:auto; bottom:-1px; right:50%; transform:translateX(50%);
-        border-left:10px solid transparent; border-right:10px solid transparent;
-        border-top:14px solid #F2611D; border-bottom:none;
-      }
-    }
+/* 고객지원 제외 색상 변경 */
+.header-scrolled .nav-link:not(.nav-active):not(#nav-contact) { color: black !important; }
+.header-scrolled .nav-logo { filter: grayscale(1) brightness(0) !important; }
+.header-scrolled #hamburger { color: black !important; }
+.header-scrolled #nav-contact { color: white !important; }
+/* 고객지원 버튼 — 활성/비활성/스크롤 모든 상태에서 흰색 텍스트 유지 */
+#nav-contact,
+#nav-contact.nav-active,
+.header-scrolled #nav-contact,
+.header-scrolled #nav-contact.nav-active { color: white !important; }
 
-    /* FAQ */
-    .faq-item .faq-body { max-height:0; overflow:hidden; transition:max-height .38s cubic-bezier(0.22,1,0.36,1); }
-    .faq-item.open .faq-body { max-height:400px; }
-    .faq-item.open .faq-chevron { transform:rotate(180deg); color:#F2611D; }
-    .faq-chevron { transition:transform .3s cubic-bezier(0.22,1,0.36,1); }
+/* 활성화 상태 */
+.nav-active, .active-menu, .drawer-link.active-menu {
+  color: #F2611D !important;
+  font-weight: 800 !important;
+}
 
-    /* 시스템 탭 */
-    .sys-tab { cursor:pointer; transition:all .25s ease; }
-    .sys-tab.active { background:#F2611D; color:#fff; border-color:#F2611D; }
-    .sys-panel { display:none; }
-    .sys-panel.active { display:block; }
+  /* 마퀴 및 애니메이션 */
+  .marquee { -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
+  .marquee-partner { -webkit-mask-image: linear-gradient(to right, transparent 0px, transparent 20px, #000 120px, #000 calc(100% - 120px), transparent calc(100% - 20px), transparent 100%); mask-image: linear-gradient(to right, transparent 0px, transparent 20px, #000 120px, #000 calc(100% - 120px), transparent calc(100% - 20px), transparent 100%); }
+  @media(min-width:640px)  { .marquee-partner { -webkit-mask-image: linear-gradient(to right, transparent 0px, #000 160px, #000 calc(100% - 160px), transparent 100%); mask-image: linear-gradient(to right, transparent 0px, #000 160px, #000 calc(100% - 160px), transparent 100%); } }
+  @media(min-width:1024px) { .marquee-partner { -webkit-mask-image: linear-gradient(to right, transparent 0px, #000 220px, #000 calc(100% - 220px), transparent 100%); mask-image: linear-gradient(to right, transparent 0px, #000 220px, #000 calc(100% - 220px), transparent 100%); } }
+  
+  .marquee-track { display: flex; width: max-content; animation: marquee-move 38s linear infinite; will-change: transform; }
+  .marquee-track.rev  { animation-name: marquee-move-rev; }
+  .marquee-track.slow { animation-duration: 52s; }
+  
+  @keyframes marquee-move { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  @keyframes marquee-move-rev { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+  
+  /* 히어로 및 UI 요소 */
+  @keyframes scrollMouse { 0%{opacity:0;transform:translateY(0)} 50%{opacity:1} 100%{opacity:0;transform:translateY(8px)} }
+  .animate-mouse { animation: scrollMouse 2s cubic-bezier(0.22,1,0.36,1) infinite; }
 
-    /* 내부페이지 히어로 */
-    .inner-hero { padding-top:9rem; padding-bottom:5rem; }
-    @media(min-width:640px){ .inner-hero{ padding-top:10rem; } }
-    @media(min-width:1024px){ .inner-hero{ padding-top:11rem; } }
-
-    /* 타임라인 */
-    .timeline-item { position:relative; padding-left:2rem; }
-    .timeline-item::before { content:''; position:absolute; left:0; top:6px; width:10px; height:10px; border-radius:50%; background:#F2611D; }
-    .timeline-item:not(:last-child)::after { content:''; position:absolute; left:4px; top:16px; bottom:-1rem; width:2px; background:linear-gradient(to bottom,#F2611D,#E7E9ED); }
-
-    @media(prefers-reduced-motion:reduce){
-      .marquee-track { animation:none; }
-      html { scroll-behavior:auto; }
-    }
-
-h2 {
-    line-height: 1.2 !important;
+  .flow-arrow { position: relative; }
+  .flow-arrow:not(:last-child)::after {
+    content:''; position:absolute; top:50%; right:-1px; transform:translateY(-50%);
+    width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent;
+    border-left:14px solid #F2611D; z-index:10;
   }
-html { scroll-behavior: smooth; }
-  </style>
+  @media(max-width:767px){
+    .flow-arrow:not(:last-child)::after {
+      top:auto; bottom:-1px; right:50%; transform:translateX(50%);
+      border-left:10px solid transparent; border-right:10px solid transparent;
+      border-top:14px solid #F2611D; border-bottom:none;
+    }
+  }
+
+  .faq-item .faq-body { max-height:0; overflow:hidden; transition:max-height .38s cubic-bezier(0.22,1,0.36,1); }
+  .faq-item.open .faq-body { max-height:400px; }
+  .faq-item.open .faq-chevron { transform:rotate(180deg); color:#F2611D; }
+  .faq-chevron { transition:transform .3s cubic-bezier(0.22,1,0.36,1); }
+
+  .sys-tab { cursor:pointer; transition:all .25s ease; }
+  .sys-tab.active { background:#F2611D; color:#fff; border-color:#F2611D; }
+  .sys-panel { display:none; }
+  .sys-panel.active { display:block; }
+
+  .inner-hero { padding-top: 9rem; padding-bottom: 5rem; }
+  @media(min-width:640px){ .inner-hero{ padding-top: 10rem; } }
+  @media(min-width:1024px){ .inner-hero{ padding-top: 11rem; } }
+
+  .timeline-item { position:relative; padding-left:2rem; }
+  .timeline-item::before { content:''; position:absolute; left:0; top:6px; width:10px; height:10px; border-radius:50%; background:#F2611D; }
+  .timeline-item:not(:last-child)::after { content:''; position:absolute; left:4px; top:16px; bottom:-1rem; width:2px; background:linear-gradient(to bottom,#F2611D,#E7E9ED); }
+
+  h2 { line-height: 1.2 !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body class="bg-neutral-50 font-sans text-ink antialiased">
 
 <!-- ═══ NAV ═══ -->
-<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 bg-gradient-to-b from-black/30 to-transparent">
-<nav class="mx-auto flex h-16 lg:h-20 max-w-wide items-center justify-between px-6 sm:px-10 lg:px-16">
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <nav class="mx-auto flex h-16 lg:h-20 max-w-wide items-center justify-between px-6 sm:px-10 lg:px-16">
     <button type="button" onclick="showPage('home')" aria-label="홈으로">
-      <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="h-7 lg:h-9 w-auto brightness-0 invert">
+      <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="nav-logo h-7 lg:h-9 w-auto brightness-0 invert">
     </button>
     <div class="hidden items-center gap-8 lg:flex">
-      <button type="button" id="nav-home"   onclick="showPage('home')"   class="nav-link text-[15px] font-semibold transition-colors" style="color:#e5e5e5">홈</button>
-      <button type="button" id="nav-about"  onclick="showPage('about')"  class="nav-link text-[15px] font-semibold transition-colors" style="color:#e5e5e5">회사소개</button>
-      <button type="button" id="nav-dev"    onclick="showPage('dev')"    class="nav-link text-[15px] font-semibold transition-colors" style="color:#e5e5e5">제품개발</button>
-      <button type="button" id="nav-oem"    onclick="showPage('oem')"    class="nav-link text-[15px] font-semibold transition-colors" style="color:#e5e5e5">OEM 제조</button>
-      <button type="button" id="nav-system" onclick="showPage('system')" class="nav-link text-[15px] font-semibold transition-colors" style="color:#e5e5e5">시스템 매니지먼트</button>
+      <button type="button" id="nav-home"   onclick="showPage('home')"   class="nav-link text-[15px] font-semibold transition-colors">홈</button>
+      <button type="button" id="nav-about"  onclick="showPage('about')"  class="nav-link text-[15px] font-semibold transition-colors">회사소개</button>
+      <button type="button" id="nav-dev"    onclick="showPage('dev')"    class="nav-link text-[15px] font-semibold transition-colors">제품개발</button>
+      <button type="button" id="nav-oem"    onclick="showPage('oem')"    class="nav-link text-[15px] font-semibold transition-colors">OEM 제조</button>
+      <button type="button" id="nav-system" onclick="showPage('system')" class="nav-link text-[15px] font-semibold transition-colors">시스템 매니지먼트</button>
       <button type="button" id="nav-contact" onclick="showPage('contact')" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">고객지원</button>
     </div>
 
@@ -136,29 +158,31 @@ html { scroll-behavior: smooth; }
 </header>
 
 <!-- 모바일 드로어 -->
+<!-- 모바일 드로워 배경 수정 -->
 <div id="drawer" class="fixed inset-0 z-[60] hidden">
-  <div onclick="toggleDrawer()" class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity"></div>
+  <div onclick="toggleDrawer()" class="absolute inset-0 bg-neutral-50/10 backdrop-blur-sd transition-opacity"></div>
   
-  <div class="absolute inset-0 h-full w-full bg-neutral-900/90 backdrop-blur-2xl p-8 transition-transform">
+  <!-- 배경 스타일을 헤더의 .header-scrolled와 동일하게 적용 -->
+  <div class="absolute inset-0 h-full w-full bg-white/30 backdrop-blur-[25px] saturate-[180%] p-8 transition-transform">
     
     <div class="flex justify-end mb-10">
-      <button type="button" onclick="toggleDrawer()" aria-label="메뉴 닫기" 
-              class="text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+      <!-- 닫기 버튼 색상도 스크롤된 헤더처럼 검은색으로 변경 -->
+      <button type="button" onclick="toggleDrawer()" class="text-black p-2 hover:bg-black/10 rounded-full transition-colors">
         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
     </div>
 
-<div class="flex flex-col gap-10 items-center justify-center mt-10">
-      <button onclick="showPage('home'); toggleDrawer()" class="text-2xl font-bold text-white hover:text-brand transition-colors">홈</button>
-      <button onclick="showPage('about'); toggleDrawer()" class="text-2xl font-bold text-white hover:text-brand transition-colors">회사소개</button>
-      <button onclick="showPage('dev'); toggleDrawer()" class="text-2xl font-bold text-white hover:text-brand transition-colors">제품개발</button>
-      <button onclick="showPage('oem'); toggleDrawer()" class="text-2xl font-bold text-white hover:text-brand transition-colors">OEM 제조</button>
-      <button onclick="showPage('system'); toggleDrawer()" class="text-2xl font-bold text-white hover:text-brand transition-colors">시스템 매니지먼트</button>
-      
-      <button onclick="showPage('contact'); toggleDrawer()" class="text-2xl font-bold text-brand hover:text-white transition-colors">고객지원</button>
-    </div>
+    <!-- 메뉴 버튼들 -->
+    <div class="flex flex-col gap-10 items-center justify-center mt-10">
+  <button id="nav-mobile-home" onclick="showPage('home'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">홈</button>
+  <button id="nav-mobile-about" onclick="showPage('about'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">회사소개</button>
+  <button id="nav-mobile-dev" onclick="showPage('dev'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">제품개발</button>
+  <button id="nav-mobile-oem" onclick="showPage('oem'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">OEM 제조</button>
+  <button id="nav-mobile-system" onclick="showPage('system'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">시스템 매니지먼트</button>
+  <button id="nav-mobile-contact" onclick="showPage('contact'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">고객지원</button>
+</div>
   </div>
 </div>
 
@@ -179,7 +203,7 @@ html { scroll-behavior: smooth; }
       <!-- 하단 페이드 -->
       <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent"></div>
       <div class="relative z-10 mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16 pt-20 pb-14">
-        <div class="max-w-2xl text-white">
+        <div class="max-w-auto text-white">
 
           <!-- 브랜드 태그 -->
           <span class="text-[11px] sm:text-xs font-bold uppercase tracking-eyebrow text-brand-light">㈜해오름식품 · Since 2007</span>
@@ -200,7 +224,7 @@ html { scroll-behavior: smooth; }
 
           <!-- 사업 정체성 설명 -->
           <p class="mt-5 text-sm sm:text-base lg:text-[17px] text-neutral-200/80 leading-relaxed max-w-lg">
-            아이디어를 제품으로, 제품을 안정적인 생산으로,<br>생산현장을 지속 가능한 시스템으로 완성합니다.
+            독창적인 제품개발과 체계적인 제조 시스템으로 <br>고객의 아이디어를 안정적인 제품으로 완성합니다.
           </p>
 
           <!-- CTA 버튼 -->
@@ -217,14 +241,14 @@ html { scroll-behavior: smooth; }
       <div class="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-transparent"></div>
       <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent"></div>
       <div class="relative z-10 mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16 pt-20 pb-14">
-        <div class="max-w-2xl text-white">
+        <div class="max-w-auto text-white">
 
           <span class="text-[11px] sm:text-xs font-bold uppercase tracking-eyebrow text-brand-light">HACCP Certified · 20+ Years Experience</span>
 
           <!-- 슬로건 연장선 -->
           <h1 class="mt-4 font-extrabold tracking-tightest leading-[1.0]"
               style="font-size:clamp(2.8rem, 7vw, 5.5rem);">
-            자연에서 온 원칙으로
+            식품 제조 원스탑 솔루션
           </h1>
 
           <div class="mt-6 flex items-center gap-4">
@@ -235,11 +259,11 @@ html { scroll-behavior: smooth; }
           </div>
 
           <p class="mt-5 text-sm sm:text-base lg:text-[17px] text-neutral-200/80 leading-relaxed max-w-lg">
-            개발부터 생산까지 하나의 흐름으로.<br>HACCP 기반의 체계적 품질관리로 안정적인 생산을 보장합니다.
+            제품을 개발하고, 생산을 설계하며, <br>식품공장이 안정적으로 운영될 수 있는 시스템을 만듭니다.
           </p>
 
           <div class="mt-8 flex flex-wrap gap-3">
-            <button type="button" onclick="showPage('dev')" class="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">제품개발 알아보기</button>
+            <button type="button" onclick="showPage('dev')" class="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">제품개발</button>
           </div>
         </div>
       </div>
@@ -298,12 +322,12 @@ html { scroll-behavior: smooth; }
 <!-- 2) 브랜드 메시지 + 3대 사업 -->
 
 <!-- Our Business 섹션 -->
-<section class="py-20 sm:py-28 lg:py-32 bg-white">
+<section class="py-12 sm:py-16 lg:py-20 bg-white">
     <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
       <!-- 1. 제품개발 -->
-      <div onclick="showPage('dev')" role="button" tabindex="0" class="group relative block h-[300px] md:h-[500px] overflow-hidden rounded-3xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+      <div onclick="showPage('dev')" role="button" tabindex="0" class="group relative block h-[300px] md:h-[500px] overflow-hidden rounded-xl2 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
         <!-- 이미지: 호버 시 확대 -->
         <img src="https://images.unsplash.com/photo-1556742502-97c00e657318?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="제품개발" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
         
@@ -312,7 +336,7 @@ html { scroll-behavior: smooth; }
         
         <!-- 콘텐츠 -->
         <div class="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 text-white">
-          <h3 class="text-2xl md:text-3xl font-bold mb-2 md:mb-4">제품개발</h3>
+          <h3 class="text-[16px] font-bold mb-2">제품개발</h3>
           <p class="text-xs md:text-sm opacity-90 leading-relaxed mb-4 md:mb-8 line-clamp-2 md:line-clamp-none">아이디어에서 양산까지, 원료와 공정을 최적화하여 최상의 제품을 개발합니다</p>
           <div class="flex items-center gap-1.5 text-sm font-bold group-hover:gap-3 transition-all duration-300">
             자세히 보기 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -321,11 +345,11 @@ html { scroll-behavior: smooth; }
       </div>
 
       <!-- 2. OEM 전문 제조 -->
-      <div onclick="showPage('oem')" role="button" tabindex="0" class="group relative block h-[300px] md:h-[500px] overflow-hidden rounded-3xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+      <div onclick="showPage('oem')" role="button" tabindex="0" class="group relative block h-[300px] md:h-[500px] overflow-hidden rounded-xl2 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
         <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="OEM 전문 제조" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <div class="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 text-white">
-          <h3 class="text-2xl md:text-3xl font-bold mb-2 md:mb-4">OEM 전문 제조</h3>
+          <h3 class="text-[16px] font-bold mb-2">OEM 전문 제조</h3>
           <p class="text-xs md:text-sm opacity-90 leading-relaxed mb-4 md:mb-8 line-clamp-2 md:line-clamp-none">개발된 제품을 일정한 품질로 반복 생산합니다. 원료 입고부터 출하까지 전 공정을 체계적으로 관리합니다.</p>
           <div class="flex items-center gap-1.5 text-sm font-bold group-hover:gap-3 transition-all duration-300">
             자세히 보기 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -334,11 +358,11 @@ html { scroll-behavior: smooth; }
       </div>
 
       <!-- 3. 시스템 매니지먼트 -->
-      <div onclick="showPage('system')" role="button" tabindex="0" class="group relative block h-[300px] md:h-[500px] overflow-hidden rounded-3xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+      <div onclick="showPage('system')" role="button" tabindex="0" class="group relative block h-[300px] md:h-[500px] overflow-hidden rounded-xl2 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
         <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="시스템 매니지먼트" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <div class="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 text-white">
-          <h3 class="text-2xl md:text-3xl font-bold mb-2 md:mb-4">시스템 매니지먼트</h3>
+          <h3 class="text-[16px] font-bold mb-2">시스템 매니지먼트</h3>
           <p class="text-xs md:text-sm opacity-90 leading-relaxed mb-4 md:mb-8 line-clamp-2 md:line-clamp-none">HACCP 시스템 구축부터 공장 신설·증축 프로젝트 관리까지. 식품 제조업의 시작부터 운영까지 함께합니다.</p>
           <div class="flex items-center gap-1.5 text-sm font-bold group-hover:gap-3 transition-all duration-300">
             자세히 보기 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -353,7 +377,7 @@ html { scroll-behavior: smooth; }
 <!-- 3) 핵심 경쟁력 2×2 -->
 <section class="py-12 sm:py-16 lg:py-20 bg-white">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="max-w-[60ch] mb-14">
+    <div class="mb-12 sm:mb-14">
       <span class="inline-block text-[11px] sm:text-xs font-bold uppercase tracking-eyebrow text-brand">Core Strengths</span>
       <h2 class="mt-5 text-ink font-extrabold tracking-tightest leading-[1.2] text-[1.75rem] sm:text-3xl lg:text-[2.5rem]">해오름식품의<br>핵심 경쟁력</h2>
     </div>
@@ -362,12 +386,12 @@ html { scroll-behavior: smooth; }
       
       <div class="rounded-xl2 bg-neutral-50 p-8 sm:p-9 ring-1 ring-neutral-200/60 flex flex-col gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-pale text-brand">
+          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl2 bg-brand-pale text-brand">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6"></path></svg>
           </div>
           <div>
             <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">01</span>
-            <h3 class="text-lg font-bold text-ink leading-tight">엄격한 원료 선정</h3>
+            <h3 class="text-[16px] font-bold text-ink leading-tight">엄격한 원료 선정</h3>
           </div>
         </div>
         <p class="text-[15px] text-ink-soft leading-relaxed">제품 특성과 품질기준에 맞는 원료를 검토하고, 입고와 보관과정까지 체계적으로 관리합니다. 유기농 원료를 우선 사용하고 화학정제원료를 배제합니다.</p>
@@ -375,12 +399,12 @@ html { scroll-behavior: smooth; }
 
       <div class="rounded-xl2 bg-neutral-50 p-8 sm:p-9 ring-1 ring-neutral-200/60 flex flex-col gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-pale text-brand">
+          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl2 bg-brand-pale text-brand">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path></svg>
           </div>
           <div>
             <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">02</span>
-            <h3 class="text-lg font-bold text-ink leading-tight">독창적인 제품개발 능력</h3>
+            <h3 class="text-[16px] font-bold text-ink leading-tight">독창적인 제품개발 능력</h3>
           </div>
         </div>
         <p class="text-[15px] text-ink-soft leading-relaxed">맛과 콘셉트만 고려하지 않습니다. 생산성, 품질 안정성, 양산 가능성까지 함께 검토하여 실제 생산할 수 있는 제품을 개발합니다.</p>
@@ -388,12 +412,12 @@ html { scroll-behavior: smooth; }
 
       <div class="rounded-xl2 bg-neutral-50 p-8 sm:p-9 ring-1 ring-neutral-200/60 flex flex-col gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-pale text-brand">
+          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl2 bg-brand-pale text-brand">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
           </div>
           <div>
             <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">03</span>
-            <h3 class="text-lg font-bold text-ink leading-tight">HACCP 기반 품질관리</h3>
+            <h3 class="text-[16px] font-bold text-ink leading-tight">HACCP 기반 품질관리</h3>
           </div>
         </div>
         <p class="text-[15px] text-ink-soft leading-relaxed">원료 입고부터 생산, 검사, 포장, 출고까지 전 공정을 관리하고, 생산과정에 대한 기록과 LOT 이력을 유지하는 체계를 갖추고 있습니다.</p>
@@ -401,12 +425,12 @@ html { scroll-behavior: smooth; }
 
       <div class="rounded-xl2 bg-neutral-50 p-8 sm:p-9 ring-1 ring-neutral-200/60 flex flex-col gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-pale text-brand">
+          <div class="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl2 bg-brand-pale text-brand">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           </div>
           <div>
             <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">04</span>
-            <h3 class="text-lg font-bold text-ink leading-tight">실전 제조 현장 경험</h3>
+            <h3 class="text-[16px] font-bold text-ink leading-tight">실전 제조 현장 경험</h3>
           </div>
         </div>
         <p class="text-[15px] text-ink-soft leading-relaxed">공장 증축과 확장이전, 신규 생산라인 구축 경험을 바탕으로 공정, 설비, 인력, 관리체계를 함께 검토할 수 있는 실전 역량을 보유합니다.</p>
@@ -419,9 +443,9 @@ html { scroll-behavior: smooth; }
 
 
 <!-- 5) 홈 CTA -->
-<section class="py-12 sm:py-16 bg-white">
+<section class="py-12 sm:py-16 lg:py-20 bg-white">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="relative overflow-hidden rounded-xl3 bg-ink px-8 py-12 sm:px-14 sm:py-14 text-center text-white">
+    <div class="relative overflow-hidden rounded-xl2 bg-ink px-8 py-12 sm:px-14 sm:py-14 text-center text-white">
       <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand/20 blur-3xl"></div>
       <div class="pointer-events-none absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-brand/10 blur-3xl"></div>
       <div class="relative z-10">
@@ -449,15 +473,15 @@ html { scroll-behavior: smooth; }
   </div>
 </section>
 <!-- 카운팅섹션 --!>
-<section class="py-12 sm:py-16 bg-neutral-50">
+<section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="mb-12 sm:mb-16">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Company Overview</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">해오름식품은<br>식품 제조 전문기업입니다</h2>
       <p class="mt-6 text-[15px] text-ink-soft leading-relaxed">규모의 과장 없이, 실제 납품 결과로 신뢰를 쌓아왔습니다. 제품개발부터 OEM 생산, HACCP 시스템 구축과 식품공장 운영체계 설계까지 지원합니다.</p>
     </div>
     <div class="space-y-6">
-    <div class="rounded-3xl bg-white  p-8 sm:p-12">
+    <div class="rounded-xl2 bg-white  p-8 sm:p-12">
       <div id="stats-bar" class="grid grid-cols-2 lg:grid-cols-4 gap-y-10">
         
         <div class="flex flex-col items-center text-center px-2 relative whitespace-nowrap">
@@ -646,11 +670,11 @@ html { scroll-behavior: smooth; }
   </div>
 </section>
 <!-- 브랜드 핵심 가치 — 이미지 스타일 -->
-<section class="py-20 sm:py-28 lg:py-32 bg-netural-50">
-  <div class="mx-auto w-full max-w-wide px-4 sm:px-10 lg:px-16">
+<section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
+  <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
 
     <!-- 섹션 타이틀 -->
-    <div class="mb-16 px-2">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Brand Values</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">
         건강과 환경의 가치를 지키는<br>원칙으로 생산합니다
@@ -661,51 +685,51 @@ html { scroll-behavior: smooth; }
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
       
       <!-- 카드 1: 친환경 -->
-      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-3xl">
+      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-xl2">
         <img src="https://images.unsplash.com/photo-1473448912268-2022ce7509d8?q=80&w=800&auto=format&fit=crop" alt="친환경" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 w-full p-8 text-white">
-          <h3 class="text-xl font-extrabold tracking-tight">친환경</h3>
+          <h3 class="text-[16px] font-bold tracking-tight">친환경</h3>
           <p class="mt-3 text-sm text-white/90 leading-relaxed">생산에서 판매까지<br>환경보호를 실천하는<br>친환경 경영</p>
         </div>
       </div>
 
       <!-- 카드 2: 유기농 -->
-      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-3xl">
+      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-xl2">
         <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop" alt="유기농" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 w-full p-8 text-white">
-          <h3 class="text-xl font-extrabold tracking-tight">유기농</h3>
+          <h3 class="text-[16px] font-bold tracking-tight">유기농</h3>
           <p class="mt-3 text-sm text-white/90 leading-relaxed">유기농산물의 우선사용,<br>화학정제원료 배제</p>
         </div>
       </div>
 
       <!-- 카드 3: 무첨가 -->
-      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-3xl">
+      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-xl2">
         <img src="https://images.unsplash.com/photo-1579722303565-d053229b4317?q=80&w=800&auto=format&fit=crop" alt="무첨가" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 w-full p-8 text-white">
-          <h3 class="text-xl font-extrabold tracking-tight">무첨가</h3>
+          <h3 class="text-[16px] font-bold tracking-tight">무첨가</h3>
           <p class="mt-3 text-sm text-white/90 leading-relaxed">일체의 화학첨가물<br>사용을 배제합니다</p>
         </div>
       </div>
 
       <!-- 카드 4: 로하스 -->
-      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-3xl">
+      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-xl2">
         <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=800&auto=format&fit=crop" alt="로하스" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 w-full p-8 text-white">
-          <h3 class="text-xl font-extrabold tracking-tight">로하스</h3>
+          <h3 class="text-[16px] font-bold tracking-tight">로하스</h3>
           <p class="mt-3 text-sm text-white/90 leading-relaxed">고객과 직원 행복을<br>실현하는 기업</p>
         </div>
       </div>
 
       <!-- 카드 5: 전통식품 -->
-      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-3xl">
+      <div class="relative aspect-[4/3] lg:aspect-[3/4] overflow-hidden rounded-xl2">
         <img src="https://images.unsplash.com/photo-1506368249639-73a05d6de64f?q=80&w=800&auto=format&fit=crop" alt="전통식품" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 w-full p-8 text-white">
-          <h3 class="text-xl font-extrabold tracking-tight">전통식품</h3>
+          <h3 class="text-[16px] font-bold tracking-tight">전통식품</h3>
           <p class="mt-3 text-sm text-white/90 leading-relaxed">전통 간식의 맛을<br>현대적으로 재해석</p>
         </div>
       </div>
@@ -786,20 +810,7 @@ html { scroll-behavior: smooth; }
     </div>
   </div>
 
-  <!-- 100+ 배너 -->
-  <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16 mt-10 sm:mt-12">
-    <div class="flex items-center gap-5 sm:gap-8 rounded-xl2 bg-gradient-to-r from-brand-pale to-white p-6 sm:p-7 ring-1 ring-brand-light/25">
-      <div class="flex items-baseline gap-0.5 text-brand flex-shrink-0">
-        <span class="text-3xl sm:text-4xl font-bold tracking-tight">100</span>
-        <span class="text-xl font-bold text-brand-light">+</span>
-      </div>
-      <div class="h-8 w-px bg-brand-light/30 hidden sm:block"></div>
-      <div>
-        <p class="text-[15px] sm:text-base font-semibold text-ink">국내외 브랜드 · 유통사에 납품 중</p>
-        <p class="mt-1 text-[13px] text-ink-muted">위에 소개한 거래처 외에도 다양한 파트너와 협력하고 있습니다</p>
-      </div>
-    </div>
-  </div>
+ 
 </section>
 <!-- 인증 현황 섹션 -->
 <section class="py-12 sm:py-16 bg-neutral-50">
@@ -855,7 +866,7 @@ html { scroll-behavior: smooth; }
 
 <!-- 레이어 팝업 -->
 <div id="certModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 p-4" onclick="closeModal()">
-  <div class="relative max-w-2xl w-full bg-white rounded-2xl p-2" onclick="event.stopPropagation()">
+  <div class="relative max-w-2xl w-full bg-white rounded-xl2 p-2" onclick="event.stopPropagation()">
     <button onclick="closeModal()" class="absolute -top-10 right-0 text-white font-bold text-xl">닫기</button>
     <img id="modalImg" src="" alt="Certification Detail" class="w-full h-auto rounded-xl">
   </div>
@@ -953,7 +964,7 @@ html { scroll-behavior: smooth; }
     <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
   </button>
   <div class="relative max-w-5xl max-h-[85vh] w-full flex items-center justify-center" onclick="event.stopPropagation()">
-    <img id="lightboxImg" src="" alt="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
+    <img id="lightboxImg" src="" alt="" class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl">
   </div>
 </div>
 
@@ -1088,7 +1099,7 @@ html { scroll-behavior: smooth; }
 <!-- Development Process -->
 <section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="max-w-[60ch] mb-14">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Development Process</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">아이디어에서 양산까지,<br>5단계 개발 여정</h2>
     </div>
@@ -1102,8 +1113,8 @@ html { scroll-behavior: smooth; }
         </div>
         <div class="lg:pl-2">
           <p class="text-[11px] font-bold uppercase tracking-eyebrow text-brand mb-2">Idea Planning</p>
-          <h3 class="text-[1.4rem] sm:text-[1.65rem] font-extrabold text-ink tracking-tightest leading-tight">아이디어 제안 및 분석</h3>
-          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">파트너사의 니즈를 파악하고 시장 트렌드와 기술적 실현 가능성을 분석합니다. 소비자 중심의 관점에서 가장 효율적인 제품의 방향성을 설계하는 시작 단계입니다.</p>
+          <h3 class="text-[16px] sm:text-[1.65rem] font-bold text-ink tracking-tightest leading-tight">아이디어 제안 및 분석</h3>
+          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">파트너사의 니즈를 파악하고 시장 트렌드와 기술적 실현 가능성을 분석합니다. <br>소비자 중심의 관점에서 가장 효율적인 제품의 방향성을 설계하는 시작 단계입니다.</p>
         </div>
         <div class="hidden lg:block w-full aspect-[4/3] overflow-hidden rounded-xl2 bg-neutral-100 flex-shrink-0">
           <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=560&auto=format&fit=crop&q=80" alt="Idea Planning" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[20%]">
@@ -1117,8 +1128,8 @@ html { scroll-behavior: smooth; }
         </div>
         <div class="lg:pl-2">
           <p class="text-[11px] font-bold uppercase tracking-eyebrow text-brand mb-2">Product Concept</p>
-          <h3 class="text-[1.4rem] sm:text-[1.65rem] font-extrabold text-ink tracking-tightest leading-tight">제품 컨셉 확정</h3>
-          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">원료의 배합비, 패키징 디자인, 영양 성분 구성 등 구체적인 제품 스펙을 정의합니다. 해오름식품의 'Natural Food Heritage' 철학이 컨셉에 녹아들도록 조율합니다.</p>
+          <h3 class="text-[16px] sm:text-[1.65rem] font-bold text-ink tracking-tightest leading-tight">제품 컨셉 확정</h3>
+          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">원료의 배합비, 패키징 디자인, 영양 성분 구성 등 구체적인 제품 스펙을 정의합니다. <br>해오름식품의 'Natural Food Heritage' 철학이 컨셉에 녹아들도록 조율합니다.</p>
         </div>
         <div class="hidden lg:block w-full aspect-[4/3] overflow-hidden rounded-xl2 bg-neutral-100 flex-shrink-0">
           <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=560&auto=format&fit=crop&q=80" alt="Product Concept" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[20%]">
@@ -1132,8 +1143,8 @@ html { scroll-behavior: smooth; }
         </div>
         <div class="lg:pl-2">
           <p class="text-[11px] font-bold uppercase tracking-eyebrow text-brand mb-2">Sample Development</p>
-          <h3 class="text-[1.4rem] sm:text-[1.65rem] font-extrabold text-ink tracking-tightest leading-tight">샘플 제작 및 테이스팅</h3>
-          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">연구소의 정밀한 실험을 통해 프로토타입을 제작합니다. 반복적인 관능검사와 물성 테스트를 거쳐 최적의 맛과 텍스처를 찾아내는 상인 정신의 과정입니다.</p>
+          <h3 class="text-[16px] sm:text-[1.65rem] font-bold text-ink tracking-tightest leading-tight">샘플 제작 및 테이스팅</h3>
+          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">연구소의 정밀한 실험을 통해 프로토타입을 제작합니다. <br>반복적인 관능검사와 물성 테스트를 거쳐 최적의 맛과 텍스처를 찾아내는 상인 정신의 과정입니다.</p>
         </div>
         <div class="hidden lg:block w-full aspect-[4/3] overflow-hidden rounded-xl2 bg-neutral-100 flex-shrink-0">
           <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=560&auto=format&fit=crop&q=80" alt="Sample Development" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[20%]">
@@ -1147,8 +1158,8 @@ html { scroll-behavior: smooth; }
         </div>
         <div class="lg:pl-2">
           <p class="text-[11px] font-bold uppercase tracking-eyebrow text-brand mb-2">Process Review</p>
-          <h3 class="text-[1.4rem] sm:text-[1.65rem] font-extrabold text-ink tracking-tightest leading-tight">공정 검토 및 최적화</h3>
-          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">대량 생산 시 발생할 수 있는 변수를 사전에 차단합니다. 설비와의 호환성, 생산 효율성, 유통 기한 안정성을 종합적으로 시뮬레이션하여 리스크를 최소화합니다.</p>
+          <h3 class="text-[16px] sm:text-[1.65rem] font-bold text-ink tracking-tightest leading-tight">공정 검토 및 최적화</h3>
+          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">대량 생산 시 발생할 수 있는 변수를 사전에 차단합니다. <br>설비와의 호환성, 생산 효율성, 유통 기한 안정성을 종합적으로 시뮬레이션하여 리스크를 최소화합니다.</p>
         </div>
         <div class="hidden lg:block w-full aspect-[4/3] overflow-hidden rounded-xl2 bg-neutral-100 flex-shrink-0">
           <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=560&auto=format&fit=crop&q=80" alt="Process Review" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[20%]">
@@ -1162,8 +1173,8 @@ html { scroll-behavior: smooth; }
         </div>
         <div class="lg:pl-2">
           <p class="text-[11px] font-bold uppercase tracking-eyebrow text-brand mb-2">Mass Production</p>
-          <h3 class="text-[1.4rem] sm:text-[1.65rem] font-extrabold text-ink tracking-tightest leading-tight">양산 및 품질 관리</h3>
-          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">최첨단 스마트 팩토리 시스템을 통해 본격적인 생산을 시작합니다. 실시간 모니터링과 전수 검사 시스템으로 모든 제품에 균일한 고품질을 보장합니다.</p>
+          <h3 class="text-[16px] sm:text-[1.65rem] font-bold text-ink tracking-tightest leading-tight">양산 및 품질 관리</h3>
+          <p class="mt-4 text-[15px] text-ink-soft leading-relaxed max-w-prose">최첨단 스마트 팩토리 시스템을 통해 본격적인 생산을 시작합니다. <br>실시간 모니터링과 전수 검사 시스템으로 모든 제품에 균일한 고품질을 보장합니다.</p>
         </div>
         <div class="hidden lg:block w-full aspect-[4/3] overflow-hidden rounded-xl2 bg-neutral-100 flex-shrink-0">
           <img src="https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=560&auto=format&fit=crop&q=80" alt="Mass Production" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[20%]">
@@ -1176,37 +1187,52 @@ html { scroll-behavior: smooth; }
 
 
 <!-- 주요 품목 -->
-<section class="py-12 sm:py-16 bg-white">
+<section class="py-12 sm:py-16 lg:py-20 bg-white">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="max-w-[60ch] mb-14">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Product Lines</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">주요 제조 품목</h2>
     </div>
+    
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <article class="rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 overflow-hidden">
-        <div class="aspect-[4/3] overflow-hidden bg-neutral-100"><img src="https://lh3.googleusercontent.com/d/1opzre8hsVL2SC-liI68SKwIF2dHiwmeT" alt="그래놀라·시리얼" class="h-full w-full object-cover transition-transform duration-500"></div>
-        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Granola · Cereal</span><h3 class="mt-3 text-[17px] font-bold text-ink">그래놀라 · 시리얼</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">유기농 오트밀, 메이플시럽, 견과류·씨앗 혼합. 기존보다 바삭한 식감.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">lukt, Knotted, ORGA, Greek day, 우리밀 외</p></div>
+      <!-- 제품 카드 템플릿: shadow 제거 및 border 적용 -->
+      
+      <!-- 1. 그래놀라·시리얼 -->
+      <article class="rounded-xl2 bg-white border border-neutral-200 transition-all duration-300 overflow-hidden">
+        <div class="aspect-[4/3] overflow-hidden bg-neutral-100"><img src="https://lh3.googleusercontent.com/d/1opzre8hsVL2SC-liI68SKwIF2dHiwmeT" alt="그래놀라·시리얼" class="h-full w-full object-cover"></div>
+        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Granola · Cereal</span><h3 class="mt-3 text-[16px] font-bold text-ink">그래놀라 · 시리얼</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">슈퍼푸드로 사랑받는 유기농 오트밀을 주 원료로 메이플시럽과 견과류, 씨앗 등을 넣어 만든 시리얼입니다. 해오름만의 특별한 노하우로 만들어 차별화된 맛과 식감을 즐길 수 있습니다.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">lukt, Knotted, ORGA, Greek day, 우리밀 외</p></div>
       </article>
-      <article class="rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 overflow-hidden">
-        <div class="aspect-[4/3] overflow-hidden bg-neutral-100"><img src="https://lh3.googleusercontent.com/d/1u1-UgXatOvoXS64gfFGR3Bgmbs6g-RXD" alt="두부과자" class="h-full w-full object-cover transition-transform duration-500"></div>
-        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Baking Snack</span><h3 class="mt-3 text-[17px] font-bold text-ink">두부과자</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">국산 풀무원 두부 30%+, 우리밀, 검정깨. 오븐 베이킹으로 담백.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">ORGA, 풀무원, 아임웰 외</p></div>
+
+      <!-- 2. 두부과자 -->
+      <article class="rounded-xl2 bg-white border border-neutral-200 transition-all duration-300 overflow-hidden">
+        <div class="aspect-[4/3] overflow-hidden bg-neutral-100"><img src="https://lh3.googleusercontent.com/d/1u1-UgXatOvoXS64gfFGR3Bgmbs6g-RXD" alt="두부과자" class="h-full w-full object-cover"></div>
+        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Baking Snack</span><h3 class="mt-3 text-[16px] font-bold text-ink">두부과자</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">기름에 튀기지 않고 오븐에 구워 더욱 담백하고 건강하게 즐길 수 있습니다. 국산 풀무원 두부 30% 이상, 우리밀, 국산 검정깨 등 우수한 원재료로 만든 프리미엄 두부과자 입니다.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">ORGA, 풀무원, 아임웰 외</p></div>
       </article>
-      <article class="rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 overflow-hidden">
-        <div class="aspect-[4/3] overflow-hidden bg-neutral-100"><img src="https://lh3.googleusercontent.com/d/1r2S9Hll_8_8TNB0o9eOVJSgOIq0-hNHv" alt="오란다" class="h-full w-full object-cover transition-transform duration-500"></div>
-        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Oranda</span><h3 class="mt-3 text-[17px] font-bold text-ink">오란다</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">국산 쌀, 유기농 쌀조청, 견과류. 말랑하고 부드러운 식감.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">태극당, 풀스케어 외</p></div>
+
+      <!-- 3. 오란다 -->
+      <article class="rounded-xl2 bg-white border border-neutral-200 transition-all duration-300 overflow-hidden">
+        <div class="aspect-[4/3] overflow-hidden bg-neutral-100"><img src="https://lh3.googleusercontent.com/d/1r2S9Hll_8_8TNB0o9eOVJSgOIq0-hNHv" alt="오란다" class="h-full w-full object-cover"></div>
+        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Oranda</span><h3 class="mt-3 text-[16px] font-bold text-ink">오란다</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">오란다 강정을 촉촉하고 부드럽게 드실 수 있도록 유기농 쌀조청으로 버무리고 견과류와 검은깨를 넣어 고소한 맛을 더했습니다. 국산 쌀로 만들어 더욱 안심하고 드실 수 있습니다.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">태극당, 풀스케어 외</p></div>
       </article>
-      <article class="rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 overflow-hidden">
+
+      <!-- 4. 퍼핑스낵 -->
+      <article class="rounded-xl2 bg-white border border-neutral-200 transition-all duration-300 overflow-hidden">
         <div class="aspect-[4/3] flex items-center justify-center bg-neutral-100 text-ink-faint flex-col gap-2"><svg class="h-10 w-10 opacity-25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="8"/></svg><span class="text-[11px] font-medium uppercase tracking-eyebrow opacity-40">퍼핑스낵</span></div>
-        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Puffing Snack</span><h3 class="mt-3 text-[17px] font-bold text-ink">퍼핑스낵</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">열·압력으로 팽화. 유기농 쌀+자색고구마, 단호박, 블루베리 등.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">디즈니홈, 롯데마트, ORGA 외</p></div>
+        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Puffing Snack</span><h3 class="mt-3 text-[16px] font-bold text-ink">퍼핑스낵</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">열과 압력만을 이용하여 퍼핑(puffed)한 스낵입니다.  유기농 쌀에 자색고구마, 단호박, 블루베리 등 성형미의 종류대로 다양한 제품을 양산할 수 있습니다. 아기과자 또는 다이어트 간식용으로 사랑받고 있습니다.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">디즈니홈, 롯데마트, ORGA 외</p></div>
       </article>
-      <article class="rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 overflow-hidden">
+
+      <!-- 5. 고구마칩 -->
+      <article class="rounded-xl2 bg-white border border-neutral-200 transition-all duration-300 overflow-hidden">
         <div class="aspect-[4/3] flex items-center justify-center bg-neutral-100 text-ink-faint flex-col gap-2"><svg class="h-10 w-10 opacity-25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 8c-2 1.5-3 4-2.5 6.5S7 19 10 19s7-2 9-5"/></svg><span class="text-[11px] font-medium uppercase tracking-eyebrow opacity-40">고구마칩</span></div>
-        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Baking Chip</span><h3 class="mt-3 text-[17px] font-bold text-ink">고구마칩</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">고구마·아몬드 100% 원물. 설탕·밀가루·색소·방부제 無.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">마싯지우 외</p></div>
+        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Baking Chip</span><h3 class="mt-3 text-[16px] font-bold text-ink">고구마칩</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">고구마와 아몬드 원물만 넣어 구운 바삭한 고구마칩 입니다. 튀기지 않고 오븐에 구웠습니다. 설탕,밀가루,색소,방부제가 들어가지 않고 만들어서 더 건강하게 먹을 수 있습니다. 식물성 단백질, 몸에 좋은 불포화지방까지 챙길 수 있습니다.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">마싯지우 외</p></div>
       </article>
-      <article class="rounded-xl2 bg-white shadow-soft ring-1 ring-neutral-200/60 transition-all duration-300 overflow-hidden">
+
+      <!-- 6. 크리스프 크래커 -->
+      <article class="rounded-xl2 bg-white border border-neutral-200 transition-all duration-300 overflow-hidden">
         <div class="aspect-[4/3] flex items-center justify-center bg-neutral-100 text-ink-faint flex-col gap-2"><svg class="h-10 w-10 opacity-25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h.01M12 8h.01M16 8h.01M8 12h.01M12 12h.01M16 12h.01"/></svg><span class="text-[11px] font-medium uppercase tracking-eyebrow opacity-40">크리스프 크래커</span></div>
-        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Crisp Cracker</span><h3 class="mt-3 text-[17px] font-bold text-ink">크리스프 크래커</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">견과류·건과일 배합, 오븐 베이킹. 얇고 바삭한 프리미엄 크래커.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">lukt, ORGA 외</p></div>
+        <div class="p-6"><span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-ink-soft">Crisp Cracker</span><h3 class="mt-3 text-[16px] font-bold text-ink">크리스프 크래커</h3><p class="mt-2 text-[14px] text-ink-soft leading-relaxed">견과류, 건과일을 배합해 오븐에 구운 얇고 바삭한 식감을 지닌 프리미엄 크래커입니다. 치즈, 요거트, 버터 스프레드로 곁들여 먹기 좋습니다.</p><p class="mt-3 text-[12px] font-medium text-ink-faint">lukt, ORGA 외</p></div>
       </article>
+
     </div>
   </div>
 </section>
@@ -1226,18 +1252,18 @@ html { scroll-behavior: smooth; }
 <!-- 제조 강점 -->
 <section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="max-w-[60ch] mb-14">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Core Value</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">독창적인 개발능력과<br>체계적인 제조 시스템</h2>
       <p class="mt-6 text-[15px] text-ink-soft leading-relaxed">해오름식품은 원료 선정부터 생산, 품질검사, 출고까지 전 과정을 관리합니다. 거래처의 발주와 납품 일정에 맞춰 생산계획을 수립하고, 생산 진행상황을 관리하는 것도 OEM 제조 역량의 중요한 부분입니다.</p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></div><h3 class="font-bold text-ink">다양한 원료관리</h3><p class="mt-2 text-[14px] text-ink-soft">유기농 원료를 안정적으로 수급·관리합니다.</p></div>
-      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3 class="font-bold text-ink">전문적인 품질관리</h3><p class="mt-2 text-[14px] text-ink-soft">HACCP 기반 입고부터 출하까지 전 공정 품질 체계 운영.</p></div>
-      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M7 14h2M7 17h2"/></svg></div><h3 class="font-bold text-ink">LOT 이력관리</h3><p class="mt-2 text-[14px] text-ink-soft">LOT 단위 생산 이력 기록 및 추적 관리 체계 구축.</p></div>
-      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14.7 6.3a4 4 0 00-5.6 5.6L3 18v3h3l6.1-6.1a4 4 0 005.6-5.6l-2.8 2.8-2-2z"/></svg></div><h3 class="font-bold text-ink">원천 제조기술</h3><p class="mt-2 text-[14px] text-ink-soft">20년 이상 축적된 독자적 제조·배합 기술 보유.</p></div>
-      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3 class="font-bold text-ink">최신 법규 지원</h3><p class="mt-2 text-[14px] text-ink-soft">표시기준·인증 요건 등 식품 관련 법규 최신 정보 지원.</p></div>
-      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0012 2z"/></svg></div><h3 class="font-bold text-ink">혁신적인 제품개발</h3><p class="mt-2 text-[14px] text-ink-soft">연구개발전담부서가 트렌드·맛·건강성 반영한 신제품 기획.</p></div>
+      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></div><h3 class="font-bold text-ink">다양한 원료관리</h3><p class="mt-2 text-[14px] text-ink-soft">유기농 원료를 안정적으로 수급·관리합니다.</p></div>
+      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3 class="font-bold text-ink">전문적인 품질관리</h3><p class="mt-2 text-[14px] text-ink-soft">HACCP 기반 입고부터 출하까지 전 공정 품질 체계 운영.</p></div>
+      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M7 14h2M7 17h2"/></svg></div><h3 class="font-bold text-ink">LOT 이력관리</h3><p class="mt-2 text-[14px] text-ink-soft">LOT 단위 생산 이력 기록 및 추적 관리 체계 구축.</p></div>
+      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14.7 6.3a4 4 0 00-5.6 5.6L3 18v3h3l6.1-6.1a4 4 0 005.6-5.6l-2.8 2.8-2-2z"/></svg></div><h3 class="font-bold text-ink">원천 제조기술</h3><p class="mt-2 text-[14px] text-ink-soft">20년 이상 축적된 독자적 제조·배합 기술 보유.</p></div>
+      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3 class="font-bold text-ink">최신 법규 지원</h3><p class="mt-2 text-[14px] text-ink-soft">표시기준·인증 요건 등 식품 관련 법규 최신 정보 지원.</p></div>
+      <div class="rounded-xl2 bg-neutral-0 p-7 transition-all"><div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0012 2z"/></svg></div><h3 class="font-bold text-ink">혁신적인 제품개발</h3><p class="mt-2 text-[14px] text-ink-soft">연구개발전담부서가 트렌드·맛·건강성 반영한 신제품 기획.</p></div>
     </div>
   </div>
 </section>
@@ -1255,7 +1281,7 @@ html { scroll-behavior: smooth; }
       
       <li class="relative rounded-xl2 bg-neutral-50 p-7 sm:p-8">
         <span class="text-4xl sm:text-5xl font-bold tracking-tightest text-brand">01</span>
-        <h3 class="mt-4 text-lg font-semibold text-ink">고객사 의뢰</h3>
+        <h3 class="mt-4 text-[16px] font-semibold text-ink">고객사 의뢰</h3>
         <ul class="mt-4 space-y-2.5">
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>시장 동향 파악</li>
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>트렌드 분석</li>
@@ -1265,7 +1291,7 @@ html { scroll-behavior: smooth; }
 
       <li class="relative rounded-xl2 bg-neutral-50 p-7 sm:p-8">
         <span class="text-4xl sm:text-5xl font-bold tracking-tightest text-brand">02</span>
-        <h3 class="mt-4 text-lg font-semibold text-ink">제품 개발</h3>
+        <h3 class="mt-4 text-[16px] font-semibold text-ink">제품 개발</h3>
         <ul class="mt-4 space-y-2.5">
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>제품 기획</li>
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>레시피 개발</li>
@@ -1276,7 +1302,7 @@ html { scroll-behavior: smooth; }
 
       <li class="relative rounded-xl2 bg-neutral-50 p-7 sm:p-8">
         <span class="text-4xl sm:text-5xl font-bold tracking-tightest text-brand">03</span>
-        <h3 class="mt-4 text-lg font-semibold text-ink">제품 생산</h3>
+        <h3 class="mt-4 text-[16px] font-semibold text-ink">제품 생산</h3>
         <ul class="mt-4 space-y-2.5">
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>원료관리</li>
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>품질관리</li>
@@ -1286,7 +1312,7 @@ html { scroll-behavior: smooth; }
 
       <li class="relative rounded-xl2 bg-neutral-50 p-7 sm:p-8">
         <span class="text-4xl sm:text-5xl font-bold tracking-tightest text-brand">04</span>
-        <h3 class="mt-4 text-lg font-semibold text-ink">완제품 납품</h3>
+        <h3 class="mt-4 text-[16px] font-semibold text-ink">완제품 납품</h3>
         <ul class="mt-4 space-y-2.5">
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>완제품 보관</li>
           <li class="flex items-start gap-2 text-[15px] leading-relaxed text-ink-soft"><svg class="mt-1.5 h-1.5 w-1.5 flex-none text-brand" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"></circle></svg>출하</li>
@@ -1301,7 +1327,7 @@ html { scroll-behavior: smooth; }
 <section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     
-    <div class="max-w-[60ch] mb-14 text-left">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Manufacturing Flow</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">원료 입고부터 출하까지<br>전 공정 관리</h2>
       <p class="mt-4 text-[15px] text-ink-soft">각 단계별 HACCP 기준에 따라 위해요소를 사전에 식별하고 지속적으로 모니터링합니다.</p>
@@ -1309,13 +1335,13 @@ html { scroll-behavior: smooth; }
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 pt-10">
 
-      <div class="relative bg-white p-6 pt-8 rounded-2xl flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
+      <div class="relative bg-white p-6 pt-8 rounded-xl2 flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
         <div class="absolute -top-2 left-6 lg:-top-4 lg:left-1/2 lg:-translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-20">STEP 01</div>
         <div class="w-16 h-16 lg:w-20 lg:h-20 bg-brand/5 rounded-full flex items-center justify-center text-brand flex-shrink-0">
           <svg class="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
         </div>
         <div class="flex flex-col items-start lg:items-center mt-0 lg:mt-4">
-          <h3 class="font-bold text-lg mb-2 text-ink">원료 입고</h3>
+          <h3 class="font-bold text-[16px] mb-2 text-ink">원료 입고</h3>
           <ul class="text-ink-muted text-[12px] leading-relaxed space-y-1 text-left lg:text-center w-full">
             <li>· 인증서 확인</li>
             <li>· 관능·물리 검사</li>
@@ -1325,13 +1351,13 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
 
-      <div class="relative bg-white p-6 pt-8 rounded-2xl flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
+      <div class="relative bg-white p-6 pt-8 rounded-xl2 flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
         <div class="absolute -top-2 left-6 lg:-top-4 lg:left-1/2 lg:-translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-20">STEP 02</div>
         <div class="w-16 h-16 lg:w-20 lg:h-20 bg-brand/5 rounded-full flex items-center justify-center text-brand flex-shrink-0">
           <svg class="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
         </div>
         <div class="flex flex-col items-start lg:items-center mt-0 lg:mt-4">
-          <h3 class="font-bold text-lg mb-2 text-ink">보관</h3>
+          <h3 class="font-bold text-[16px] mb-2 text-ink">보관</h3>
           <ul class="text-ink-muted text-[12px] leading-relaxed space-y-1 text-left lg:text-center w-full">
             <li>· 온·습도 관리</li>
             <li>· 선입선출</li>
@@ -1340,13 +1366,13 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
 
-      <div class="relative bg-white p-6 pt-8 rounded-2xl flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
+      <div class="relative bg-white p-6 pt-8 rounded-xl2 flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
         <div class="absolute -top-2 left-6 lg:-top-4 lg:left-1/2 lg:-translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-20">STEP 03</div>
         <div class="w-16 h-16 lg:w-20 lg:h-20 bg-brand/5 rounded-full flex items-center justify-center text-brand flex-shrink-0">
           <svg class="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517l-2.387-.477a2 2 0 00-1.022.547M12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
         </div>
         <div class="flex flex-col items-start lg:items-center mt-0 lg:mt-4">
-          <h3 class="font-bold text-lg mb-2 text-ink">생산</h3>
+          <h3 class="font-bold text-[16px] mb-2 text-ink">생산</h3>
           <ul class="text-ink-muted text-[12px] leading-relaxed space-y-1 text-left lg:text-center w-full">
             <li>· CCP 모니터링</li>
             <li>· 위생 체크</li>
@@ -1356,13 +1382,13 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
 
-      <div class="relative bg-white p-6 pt-8 rounded-2xl flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
+      <div class="relative bg-white p-6 pt-8 rounded-xl2 flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
         <div class="absolute -top-2 left-6 lg:-top-4 lg:left-1/2 lg:-translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-20">STEP 04</div>
         <div class="w-16 h-16 lg:w-20 lg:h-20 bg-brand/5 rounded-full flex items-center justify-center text-brand flex-shrink-0">
           <svg class="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
         </div>
         <div class="flex flex-col items-start lg:items-center mt-0 lg:mt-4">
-          <h3 class="font-bold text-lg mb-2 text-ink">검사</h3>
+          <h3 class="font-bold text-[16px] mb-2 text-ink">검사</h3>
           <ul class="text-ink-muted text-[12px] leading-relaxed space-y-1 text-left lg:text-center w-full">
             <li>· 금속 탐지</li>
             <li>· 중량 검사</li>
@@ -1371,13 +1397,13 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
 
-      <div class="relative bg-white p-6 pt-8 rounded-2xl flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
+      <div class="relative bg-white p-6 pt-8 rounded-xl2 flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
         <div class="absolute -top-2 left-6 lg:-top-4 lg:left-1/2 lg:-translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-20">STEP 05</div>
         <div class="w-16 h-16 lg:w-20 lg:h-20 bg-brand/5 rounded-full flex items-center justify-center text-brand flex-shrink-0">
           <svg class="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
         </div>
         <div class="flex flex-col items-start lg:items-center mt-0 lg:mt-4">
-          <h3 class="font-bold text-lg mb-2 text-ink">포장</h3>
+          <h3 class="font-bold text-[16px] mb-2 text-ink">포장</h3>
           <ul class="text-ink-muted text-[12px] leading-relaxed space-y-1 text-left lg:text-center w-full">
             <li>· 자동 계량</li>
             <li>· 실링</li>
@@ -1386,13 +1412,13 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
 
-      <div class="relative bg-white p-6 pt-8 rounded-2xl flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
+      <div class="relative bg-white p-6 pt-8 rounded-xl2 flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center gap-6 lg:gap-0 transition-all duration-300">
         <div class="absolute -top-2 left-6 lg:-top-4 lg:left-1/2 lg:-translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-20">STEP 06</div>
         <div class="w-16 h-16 lg:w-20 lg:h-20 bg-brand/5 rounded-full flex items-center justify-center text-brand flex-shrink-0">
           <svg class="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         </div>
         <div class="flex flex-col items-start lg:items-center mt-0 lg:mt-4">
-          <h3 class="font-bold text-lg mb-2 text-ink">출하</h3>
+          <h3 class="font-bold text-[16px] mb-2 text-ink">출하</h3>
           <ul class="text-ink-muted text-[12px] leading-relaxed space-y-1 text-left lg:text-center w-full">
             <li>· LOT 기록</li>
             <li>· 서류 제공</li>
@@ -1410,7 +1436,7 @@ html { scroll-behavior: smooth; }
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
 
     <!-- 헤더 -->
-    <div class="mb-12 sm:mb-16">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Equipment</span>
       <h2 class="mt-4 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">보유 설비</h2>
       <p class="mt-4 text-[15px] text-ink-soft max-w-[60ch]">원료 입고부터 출하까지, 각 공정에 특화된 설비를 갖추고 안정적인 생산 체계를 운영합니다.</p>
@@ -1422,7 +1448,7 @@ html { scroll-behavior: smooth; }
       <!-- Col 1 : 베이킹·가공 설비 -->
       <div class="lg:pr-8 xl:pr-12">
         <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand/60">Equipment 01</span>
-        <h3 class="mt-3 text-[1.15rem] sm:text-[1.25rem] font-extrabold text-ink tracking-tight leading-snug">베이킹·가공 설비</h3>
+        <h3 class="mt-3 text-[16px] sm:text-[16px] font-bold text-ink tracking-tight leading-snug">베이킹·가공 설비</h3>
         <p class="mt-3 text-[14px] text-brand leading-relaxed">로타리오븐과 컨벡션오븐을 함께 운용해 제품 특성에 맞는 베이킹 공정을 구현합니다.</p>
         <ul class="mt-5 space-y-2.5">
           <li class="flex gap-2.5 text-[14px] text-ink-soft"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"></span>로타리오븐 · 컨벡션오븐</li>
@@ -1435,7 +1461,7 @@ html { scroll-behavior: smooth; }
       <!-- Col 2 : 검사·탐지 설비 -->
       <div class="lg:px-8 xl:px-12">
         <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand/60">Equipment 02</span>
-        <h3 class="mt-3 text-[1.15rem] sm:text-[1.25rem] font-extrabold text-ink tracking-tight leading-snug">검사·탐지 설비</h3>
+        <h3 class="mt-3 text-[16px] sm:text-[16px] font-bold text-ink tracking-tight leading-snug">검사·탐지 설비</h3>
         <p class="mt-3 text-[14px] text-brand leading-relaxed">알루미늄·일반 금속검출기를 이중으로 운영해 이물 혼입 제로를 목표로 합니다.</p>
         <ul class="mt-5 space-y-2.5">
           <li class="flex gap-2.5 text-[14px] text-ink-soft"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"></span>알루미늄 금속탐지기</li>
@@ -1448,7 +1474,7 @@ html { scroll-behavior: smooth; }
       <!-- Col 3 : 포장·계량 설비 -->
       <div class="lg:px-8 xl:px-12">
         <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand/60">Equipment 03</span>
-        <h3 class="mt-3 text-[1.15rem] sm:text-[1.25rem] font-extrabold text-ink tracking-tight leading-snug">포장·계량 설비</h3>
+        <h3 class="mt-3 text-[16px] sm:text-[16px] font-bold text-ink tracking-tight leading-snug">포장·계량 설비</h3>
         <p class="mt-3 text-[14px] text-brand leading-relaxed">자동 계량·포장 라인으로 균일한 중량과 표시 정확도를 유지합니다.</p>
         <ul class="mt-5 space-y-2.5">
           <li class="flex gap-2.5 text-[14px] text-ink-soft"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"></span>자동 계량 포장기</li>
@@ -1461,7 +1487,7 @@ html { scroll-behavior: smooth; }
       <!-- Col 4 : 위생·보관 설비 -->
       <div class="lg:pl-8 xl:pl-12">
         <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand/60">Equipment 04</span>
-        <h3 class="mt-3 text-[1.15rem] sm:text-[1.25rem] font-extrabold text-ink tracking-tight leading-snug">위생·보관 설비</h3>
+        <h3 class="mt-3 text-[16px] sm:text-[16px] font-bold text-ink tracking-tight leading-snug">위생·보관 설비</h3>
         <p class="mt-3 text-[14px] text-brand leading-relaxed">위생전실과 온습도 관리 시스템으로 교차오염 없는 저장·생산 환경을 갖췄습니다.</p>
         <ul class="mt-5 space-y-2.5">
           <li class="flex gap-2.5 text-[14px] text-ink-soft"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"></span>위생전실 시스템</li>
@@ -1495,7 +1521,7 @@ html { scroll-behavior: smooth; }
     <div class="flex flex-col lg:flex-row gap-16 items-start">
       <div class="w-full lg:w-[35%] lg:sticky lg:top-32">
         <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">System Management</span>
-        <h2 class="mt-5 text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.1]">시스템 매니지먼트</h2>
+        <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">시스템 매니지먼트</h2>
         <p class="mt-6 text-[15px] text-ink-soft">
           공장 운영의 효율성을 극대화하기 위한 전문적인 매니지먼트 서비스입니다.
         </p>
@@ -1507,7 +1533,7 @@ html { scroll-behavior: smooth; }
       <div class="w-full lg:w-[65%] grid grid-cols-1 md:grid-cols-2 gap-5">
         
         <div class="rounded-xl2 bg-neutral-50 p-7 ring-1 ring-neutral-200/60 transition-all">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </div>
           <h3 class="font-bold text-ink">01. 생산 공정 최적화</h3>
@@ -1515,7 +1541,7 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="rounded-xl2 bg-neutral-50 p-7 ring-1 ring-neutral-200/60 transition-all">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
           </div>
           <h3 class="font-bold text-ink">02. 품질 관리 시스템</h3>
@@ -1523,7 +1549,7 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="rounded-xl2 bg-neutral-50 p-7 ring-1 ring-neutral-200/60 transition-all">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
           </div>
           <h3 class="font-bold text-ink">03. 인력 운영 및 교육</h3>
@@ -1531,7 +1557,7 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="rounded-xl2 bg-brand-pale p-7 ring-1 ring-brand-pale transition-all">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-brand mb-5">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-white text-brand mb-5">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
           </div>
           <h3 class="font-bold text-ink mb-3">제공 범위</h3>
@@ -1553,7 +1579,7 @@ html { scroll-behavior: smooth; }
 <section class="py-12 sm:py-16 lg:py-20 bg-white">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     
-    <div class="max-w-[60ch] mb-14">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Project Management</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">
         생산과 품질관리가 실제로 이루어지는<br>식품공장을 설계합니다
@@ -1563,7 +1589,7 @@ html { scroll-behavior: smooth; }
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       
       <div class="rounded-xl2 bg-neutral-50 p-7 ring-1 ring-neutral-200/60 transition-all">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5">
+        <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
         </div>
         <h3 class="font-bold text-ink">공장 레이아웃 설계</h3>
@@ -1571,7 +1597,7 @@ html { scroll-behavior: smooth; }
       </div>
 
       <div class="rounded-xl2 bg-neutral-50 p-7 ring-1 ring-neutral-200/60 transition-all">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5">
+        <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M12 2a10 10 0 100 20 10 10 0 000-20z"></path></svg>
         </div>
         <h3 class="font-bold text-ink">설비 배치 및 공정 설계</h3>
@@ -1579,7 +1605,7 @@ html { scroll-behavior: smooth; }
       </div>
 
       <div class="rounded-xl2 bg-neutral-50 p-7 ring-1 ring-neutral-200/60 transition-all">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-pale text-brand mb-5">
+        <div class="flex h-11 w-11 items-center justify-center rounded-xl2 bg-brand-pale text-brand mb-5">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
         </div>
         <h3 class="font-bold text-ink">전체 일정 관리</h3>
@@ -1588,7 +1614,7 @@ html { scroll-behavior: smooth; }
     </div>
 
     <div class="mt-8 bg-brand-pale border border-brand-pale rounded-xl2 p-7 flex flex-col md:flex-row md:items-center gap-6">
-      <h3 class="text-sm font-bold text-ink whitespace-nowrap">적용 가능 프로젝트</h3>
+      <p class="text-[11px] font-bold uppercase tracking-eyebrow text-brand/60 mb-2">적용 가능 프로젝트</p>
       <div class="flex flex-wrap items-center gap-3">
         <span class="px-4 py-1.5 bg-white rounded-full text-xs font-medium text-ink">공장 신설</span>
         <span class="px-4 py-1.5 bg-white rounded-full text-xs font-medium text-ink">증축</span>
@@ -1601,9 +1627,9 @@ html { scroll-behavior: smooth; }
 </section>
 
 <!-- 왜 해오름인가 -->
-<section class="py-12 sm:py-16 bg-neutral-50">
+<section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
-    <div class="max-w-[60ch] mb-12">
+    <div class="mb-12 sm:mb-14">
       <span class="text-[11px] font-bold uppercase tracking-eyebrow text-brand">Why Haeoreum</span>
       <h2 class="mt-5 text-[1.6rem] sm:text-2xl lg:text-[2rem] font-extrabold text-ink tracking-tightest leading-[1.15]">단순 컨설팅이 아닙니다.<br>실제 해본 사람이 함께합니다.</h2>
     </div>
@@ -1640,7 +1666,7 @@ html { scroll-behavior: smooth; }
 </section>
 
 <!-- ============ CONTACT MAIN ============ -->
-<section class="py-12 sm:py-16 bg-neutral-50">
+<section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-[380px_1fr] lg:gap-10">
 
@@ -1653,7 +1679,7 @@ html { scroll-behavior: smooth; }
 
         <!-- 대표 전화 -->
         <div class="flex items-start gap-4">
-          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-pale text-brand">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl2 bg-brand-pale text-brand">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"></path>
             </svg>
@@ -1666,7 +1692,7 @@ html { scroll-behavior: smooth; }
 
         <!-- 이메일 -->
         <div class="mt-6 flex items-start gap-4">
-          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-pale text-brand">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl2 bg-brand-pale text-brand">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="2" y="4" width="20" height="16" rx="2"></rect>
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
@@ -1682,7 +1708,7 @@ html { scroll-behavior: smooth; }
 
         <!-- 운영 시간 -->
         <div class="flex items-start gap-4">
-          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-ink-soft">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl2 bg-neutral-100 text-ink-soft">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9"></circle>
               <path d="M12 7v5l3 2"></path>
@@ -1738,7 +1764,7 @@ html { scroll-behavior: smooth; }
 </section>
 
 <!-- FAQ -->
-<section class="py-12 sm:py-16 bg-neutral-50">
+<section class="py-12 sm:py-16 lg:py-20 bg-neutral-50">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-12 lg:gap-16">
       <div>
@@ -1824,190 +1850,127 @@ html { scroll-behavior: smooth; }
 
 <!-- ═══ SCRIPTS ═══ -->
 <script>
+// --- [1] 네비게이션 및 페이지 전환 로직 ---
 var PAGE_KEYS=['home','about','dev','oem','system','contact'];
 var lastFocused=null;
 
-function showPage(name,push){
-  if(push===undefined)push=true;
-  if(PAGE_KEYS.indexOf(name)===-1)name='home';
-  document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden');});
-  var t=document.getElementById('page-'+name);
-  if(t){ t.classList.remove('hidden'); }
-  PAGE_KEYS.forEach(function(k){
-    var btn=document.getElementById('nav-'+k);
-    if(!btn||k==='contact')return;
-    btn.style.color=(k===name)?'#F2611D':'#e5e5e5';
+function showPage(name, push = true) {
+  if (PAGE_KEYS.indexOf(name) === -1) name = 'home';
+  
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  var t = document.getElementById('page-' + name);
+  if (t) t.classList.remove('hidden');
+
+  document.querySelectorAll('.nav-link, .drawer-link').forEach(el => el.classList.remove('nav-active'));
+  document.getElementById('nav-contact').classList.remove('nav-active');
+  
+  PAGE_KEYS.forEach(k => {
+    if (k === name) {
+      document.querySelectorAll('#nav-' + k + ', #nav-mobile-' + k).forEach(el => el.classList.add('nav-active'));
+    }
   });
-  if(push)history.pushState(null,'','#'+name);
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  if (push) history.pushState(null, '', '#' + name);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  // 모바일 메뉴가 열려있다면 닫기
+  closeDrawer();
 }
 
-function loadFromHash(){
-  var h=(location.hash||'').replace('#','');
-  if(PAGE_KEYS.indexOf(h)===-1)h='home';
-  showPage(h,false);
-}
+// --- [2] 스크롤 이벤트 (네비바 + 탑버튼) ---
+let prevScrollY = window.scrollY;
+const navbar = document.getElementById("navbar");
+const hdr = document.querySelector('header');
+const topBtn = document.getElementById('scrollToTopBtn');
 
-function toggleDrawer() {
-    const drawer = document.getElementById('drawer');
-    drawer.classList.toggle('hidden');
-    // 메뉴 열릴 때 body 스크롤 방지
-    document.body.style.overflow = drawer.classList.contains('hidden') ? 'auto' : 'hidden';
+window.addEventListener('scroll', () => {
+  const curY = window.scrollY;
+  
+  // 헤더 배경 처리
+  if (hdr) hdr.classList.toggle('header-scrolled', curY > 60);
+
+  // 네비바 숨김/보임 (이벤트가 버튼 클릭을 방해하지 않도록 처리)
+  if (navbar) {
+    if (curY <= 0 || prevScrollY > curY) {
+      navbar.style.transform = "translateY(0)";
+    } else if (curY > 100) {
+      navbar.style.transform = "translateY(-100%)";
+    }
   }
+
+  // 스크롤 탑 버튼
+  if (topBtn) {
+    topBtn.classList.toggle('opacity-100', curY >= 300);
+    topBtn.classList.toggle('opacity-0', curY < 300);
+  }
+
+  prevScrollY = curY;
+}, { passive: true });
+
+// --- [3] 초기화 및 드로워 ---
+function loadFromHash(){
+  var h = (location.hash||'').replace('#','');
+  showPage(h, false);
+}
+window.addEventListener('popstate', loadFromHash);
+document.addEventListener('DOMContentLoaded', loadFromHash);
+
+function toggleFaqItem(btn){
+  var item = btn.closest('.faq-item');
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i){ i.classList.remove('open'); });
+  if(!wasOpen) item.classList.add('open');
+}
+
 function openDrawer(){
-  lastFocused=document.activeElement;
-  var d=document.getElementById('nav-drawer');
-  d.classList.remove('opacity-0','pointer-events-none','translate-y-2');
-  d.classList.add('opacity-100','pointer-events-auto','translate-y-0');
-  d.removeAttribute('aria-hidden');d.removeAttribute('inert');
+  var d = document.getElementById('drawer');
+  if(!d) return;
+  d.classList.remove('hidden');
   document.body.classList.add('nav-open');
-  document.getElementById('hamburger').setAttribute('aria-expanded','true');
+  var h = document.getElementById('hamburger');
+  if(h) h.setAttribute('aria-expanded','true');
 }
 function closeDrawer(){
-  var d=document.getElementById('nav-drawer');
-  d.classList.add('opacity-0','pointer-events-none','translate-y-2');
-  d.classList.remove('opacity-100','pointer-events-auto','translate-y-0');
-  d.setAttribute('aria-hidden','true');d.setAttribute('inert','');
+  var d = document.getElementById('drawer');
+  if(!d) return;
+  d.classList.add('hidden');
   document.body.classList.remove('nav-open');
-  document.getElementById('hamburger').setAttribute('aria-expanded','false');
-  if(lastFocused&&lastFocused.focus)lastFocused.focus();
-  lastFocused=null;
+  var h = document.getElementById('hamburger');
+  if(h) h.setAttribute('aria-expanded','false');
 }
-function toggleFaqItem(btn){
-  var item=btn.closest('.faq-item');
-  var wasOpen=item.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(function(i){i.classList.remove('open');});
-  if(!wasOpen)item.classList.add('open');
+function toggleDrawer(){
+  var d = document.getElementById('drawer');
+  if(!d) return;
+  if(d.classList.contains('hidden')) openDrawer();
+  else closeDrawer();
 }
-
-document.addEventListener('keydown',function(e){
-  if((e.key==='Escape'||e.key==='Esc')&&document.getElementById('nav-drawer').classList.contains('opacity-100'))closeDrawer();
+document.addEventListener('keydown', function(e){
+  if((e.key==='Escape'||e.key==='Esc')) closeDrawer();
 });
-
-/* sticky 스크롤 헤더 전환 */
-(function(){
-  var hdr=document.querySelector('header');
-  var lastY=0;
-  function onScroll(){
-    var y=window.scrollY;
-    if(y>60){
-      hdr.style.background='rgba(22,24,29,0.96)';
-      hdr.style.backdropFilter='blur(16px)';
-      hdr.style.position='fixed';
-      hdr.style.top='0';
-      hdr.style.left='0';
-      hdr.style.right='0';
-      hdr.style.borderBottom='1px solid rgba(255,255,255,0.07)';
-    } else {
-      hdr.style.background='';
-      hdr.style.backdropFilter='';
-      hdr.style.position='absolute';
-      hdr.style.borderBottom='';
-    }
-    lastY=y;
-  }
-  window.addEventListener('scroll',onScroll,{passive:true});
-  onScroll();
-})();
-
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',loadFromHash);
-}else{loadFromHash();}
-window.addEventListener('popstate',loadFromHash);
-
-let prevScrollpos = window.pageYOffset;
-  const navbar = document.getElementById("navbar");
-  let hideTimeout;
-
-  window.addEventListener('scroll', () => {
-    let currentScrollPos = window.pageYOffset;
-    
-    // 스크롤 시 기존 타이머 초기화 (숨기기 방지)
-    clearTimeout(hideTimeout);
-    
-    // 1. 페이지 최상단이거나 스크롤 올릴 때는 즉시 보임
-    if (currentScrollPos <= 0 || prevScrollpos > currentScrollPos) {
-      navbar.style.transform = "translateY(0)";
-    } 
-    // 2. 스크롤 내릴 때는 즉시 숨김
-    else {
-      navbar.style.transform = "translateY(-100%)";
-      
-      // 2초간 정지 감지 후 다시 노출
-      hideTimeout = setTimeout(() => {
-        navbar.style.transform = "translateY(0)";
-      }, 2000);
-    }
-    
-    prevScrollpos = currentScrollPos;
-  });
-  function openModal(imgSrc) {
-    document.getElementById('modalImg').src = imgSrc;
-    document.getElementById('certModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    document.getElementById('certModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-  }
 </script>
-<button 
-  id="scrollToTopBtn" 
-  onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-  class="fixed bottom-6 right-6 z-50 p-2.5 bg-brand text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 hover:bg-brand-dark"
-  aria-label="맨 위로 이동"
->
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-  </svg>
+<!-- 탑버튼 -->
+<button type="button" id="scrollToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+  class="fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-ink text-white shadow-soft opacity-0 transition-opacity duration-300 pointer-events-none"
+  aria-label="맨 위로">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>
 </button>
-
 <script>
-  const btn = document.getElementById('scrollToTopBtn');
-  let lastScrollY = window.scrollY;
-  let idleTimer;
-
-  function showButton() {
-    btn.classList.remove('opacity-0');
-    btn.classList.add('opacity-100');
-  }
-
-  function hideButton() {
-    btn.classList.add('opacity-0');
-    btn.classList.remove('opacity-100');
-  }
-
-  function resetIdleTimer() {
-    clearTimeout(idleTimer);
-    // 스크롤 중이 아닐 때 2초간 멈춰있으면 버튼 노출
-    idleTimer = setTimeout(() => {
-      if (window.scrollY >= 300) {
-        showButton();
-      }
-    }, 2000);
-  }
-
-  window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-
-    // 1. 최상단 근처면 항상 숨김
-    if (currentScrollY < 300) {
-      hideButton();
-    } 
-    // 2. 아래로 스크롤 중이면 숨김
-    else if (currentScrollY > lastScrollY) {
-      hideButton();
-      resetIdleTimer(); // 멈추는 순간을 감지하기 위해 타이머 초기화
-    } 
-    // 3. 위로 스크롤 중이면 보임
-    else {
-      showButton();
-      clearTimeout(idleTimer); // 위로 올리는 중에는 타이머 중지
+// 탑버튼 pointer-events 연동
+(function(){
+  var btn = document.getElementById('scrollToTopBtn');
+  if(!btn) return;
+  window.addEventListener('scroll', function(){
+    if(window.scrollY >= 300){
+      btn.classList.add('opacity-100');
+      btn.classList.remove('opacity-0');
+      btn.style.pointerEvents = 'auto';
+    } else {
+      btn.classList.add('opacity-0');
+      btn.classList.remove('opacity-100');
+      btn.style.pointerEvents = 'none';
     }
-
-    lastScrollY = currentScrollY;
-  }, { passive: true });
+  }, {passive:true});
+})();
 </script>
 </body>
 </html>

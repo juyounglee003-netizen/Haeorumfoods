@@ -140,14 +140,13 @@ header {
       <img src="https://lh3.googleusercontent.com/d/1c7Js99pX1gPT5kV5J_n1y87QGbJkKnp6" alt="㈜해오름식품" class="nav-logo h-7 lg:h-9 w-auto brightness-0 invert">
     </button>
     <div class="hidden items-center gap-8 lg:flex">
-  <!-- 각 버튼에 nav-link 클래스 유지, 필요시 data-page 속성 활용 -->
-  <button type="button" id="nav-home" onclick="showPage('home') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">홈</button>
-  <button type="button" id="nav-about" onclick="showPage('about') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">회사소개</button>
-  <button type="button" id="nav-dev" onclick="showPage('dev') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">제품개발</button>
-  <button type="button" id="nav-oem" onclick="showPage('oem') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">OEM 제조</button>
-  <button type="button" id="nav-system" onclick="showPage('system') toggleDrawer();" class="nav-link text-[15px] font-semibold transition-colors">시스템 매니지먼트</button>
-  <button type="button" id="nav-contact" onclick="showPage('contact') toggleDrawer();" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">고객지원</button>
-</div>
+      <button type="button" id="nav-home"   onclick="showPage('home')"   class="nav-link text-[15px] font-semibold transition-colors">홈</button>
+      <button type="button" id="nav-about"  onclick="showPage('about')"  class="nav-link text-[15px] font-semibold transition-colors">회사소개</button>
+      <button type="button" id="nav-dev"    onclick="showPage('dev')"    class="nav-link text-[15px] font-semibold transition-colors">제품개발</button>
+      <button type="button" id="nav-oem"    onclick="showPage('oem')"    class="nav-link text-[15px] font-semibold transition-colors">OEM 제조</button>
+      <button type="button" id="nav-system" onclick="showPage('system')" class="nav-link text-[15px] font-semibold transition-colors">시스템 매니지먼트</button>
+      <button type="button" id="nav-contact" onclick="showPage('contact')" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-cta">고객지원</button>
+    </div>
 
     <button type="button" id="hamburger" onclick="toggleDrawer()" aria-label="메뉴 열기" aria-expanded="false"
       class="inline-flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 lg:hidden">
@@ -177,12 +176,12 @@ header {
 
     <!-- 메뉴 버튼들 -->
     <div class="flex flex-col gap-10 items-center justify-center mt-10">
-  <button id="nav-mobile-home" onclick="showPage('home'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">홈</button>
-  <button id="nav-mobile-about" onclick="showPage('about'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">회사소개</button>
-  <button id="nav-mobile-dev" onclick="showPage('dev'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">제품개발</button>
-  <button id="nav-mobile-oem" onclick="showPage('oem'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">OEM 제조</button>
-  <button id="nav-mobile-system" button onclick="showPage('system'); toggleDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">시스템 매니지먼트</button>
-  <button id="nav-mobile-contact" onclick="showPage('contact'); toggleDrawer();" class="drawer-link text-2xl font-bold text-black transition-colors">고객지원</button>
+  <button id="nav-mobile-home" onclick="showPage('home'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">홈</button>
+  <button id="nav-mobile-about" onclick="showPage('about'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">회사소개</button>
+  <button id="nav-mobile-dev" onclick="showPage('dev'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">제품개발</button>
+  <button id="nav-mobile-oem" onclick="showPage('oem'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">OEM 제조</button>
+  <button id="nav-mobile-system" onclick="showPage('system'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">시스템 매니지먼트</button>
+  <button id="nav-mobile-contact" onclick="showPage('contact'); closeDrawer()" class="drawer-link text-2xl font-bold text-black transition-colors">고객지원</button>
 </div>
   </div>
 </div>
@@ -838,28 +837,28 @@ header {
       <div class="cursor-pointer rounded-xl2 bg-white p-7 ring-1 ring-neutral-200/60 hover:-translate-y-1 transition-all" onclick="openModal('organic.jpg')">
         <span class="inline-flex items-center rounded-full bg-green-50 px-3 py-1 text-[13px] font-semibold text-green-700">유기농</span>
         <h3 class="mt-4 text-[17px] font-bold text-ink">유기가공식품 인증</h3>
-        <p class="mt-2 text-[15px] text-ink-soft">유기농 원료를 사용한 가공식품 제조에 대한 국가 인증[cite: 2].</p>
+        <p class="mt-2 text-[15px] text-ink-soft">유기농 원료를 사용한 가공식품 제조에 대한 국가 인증.</p>
       </div>
 
       <!-- 4. 벤처기업 확인서 -->
       <div class="cursor-pointer rounded-xl2 bg-white p-7 ring-1 ring-neutral-200/60 hover:-translate-y-1 transition-all" onclick="openModal('venture.jpg')">
         <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[13px] font-semibold text-blue-700">기업</span>
         <h3 class="mt-4 text-[17px] font-bold text-ink">벤처기업 확인서</h3>
-        <p class="mt-2 text-[15px] text-ink-soft">2014년 3월 취득, 기술보증기금 발행 기술력 인정 벤처기업[cite: 2].</p>
+        <p class="mt-2 text-[15px] text-ink-soft">2014년 3월 취득, 기술보증기금 발행 기술력 인정 벤처기업.</p>
       </div>
 
       <!-- 5. 연구개발전담부서 인정 -->
       <div class="cursor-pointer rounded-xl2 bg-white p-7 ring-1 ring-neutral-200/60 hover:-translate-y-1 transition-all" onclick="openModal('rd_dept.jpg')">
         <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[13px] font-semibold text-blue-700">연구</span>
         <h3 class="mt-4 text-[17px] font-bold text-ink">연구개발전담부서 인정</h3>
-        <p class="mt-2 text-[15px] text-ink-soft">과학기술정보통신부 인정 연구개발전담부서 운영[cite: 2].</p>
+        <p class="mt-2 text-[15px] text-ink-soft">과학기술정보통신부 인정 연구개발전담부서 운영.</p>
       </div>
 
       <!-- 6. 특허 보유 -->
       <div class="cursor-pointer rounded-xl2 bg-white p-7 ring-1 ring-neutral-200/60 hover:-translate-y-1 transition-all" onclick="openModal('patent.jpg')">
         <span class="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-[13px] font-semibold text-ink-soft">특허</span>
         <h3 class="mt-4 text-[17px] font-bold text-ink">특허 2건 보유</h3>
-        <p class="mt-2 text-[15px] text-ink-soft">천연양념 이용 나초스낵(제10-1344865호) 및 당절임 콩(제10-0822717호)[cite: 2].</p>
+        <p class="mt-2 text-[15px] text-ink-soft">천연양념 이용 나초스낵(제10-1344865호) 및 당절임 콩(제10-0822717호).</p>
       </div>
     </div>
   </div>
@@ -1916,50 +1915,27 @@ function loadFromHash(){
 window.addEventListener('popstate', loadFromHash);
 document.addEventListener('DOMContentLoaded', loadFromHash);
 
-
-function toggleDrawer() {
-    const drawer = document.getElementById('drawer');
-    drawer.classList.toggle('hidden');
-    // 메뉴 열릴 때 body 스크롤 방지
-    document.body.style.overflow = drawer.classList.contains('hidden') ? 'auto' : 'hidden';
-  }
 function openDrawer(){
-  lastFocused=document.activeElement;
-  var d=document.getElementById('nav-drawer');
-  d.classList.remove('opacity-0','pointer-events-none','translate-y-2');
-  d.classList.add('opacity-100','pointer-events-auto','translate-y-0');
-  d.removeAttribute('aria-hidden');d.removeAttribute('inert');
+  var d = document.getElementById('drawer');
+  if(!d) return;
+  d.classList.remove('hidden');
   document.body.classList.add('nav-open');
-  document.getElementById('hamburger').setAttribute('aria-expanded','true');
+  var h = document.getElementById('hamburger');
+  if(h) h.setAttribute('aria-expanded','true');
 }
 function closeDrawer(){
-  var d=document.getElementById('nav-drawer');
-  d.classList.add('opacity-0','pointer-events-none','translate-y-2');
-  d.classList.remove('opacity-100','pointer-events-auto','translate-y-0');
-  d.setAttribute('aria-hidden','true');d.setAttribute('inert','');
+  var d = document.getElementById('drawer');
+  if(!d) return;
+  d.classList.add('hidden');
   document.body.classList.remove('nav-open');
-  document.getElementById('hamburger').setAttribute('aria-expanded','false');
-  if(lastFocused&&lastFocused.focus)lastFocused.focus();
-  lastFocused=null;
+  var h = document.getElementById('hamburger');
+  if(h) h.setAttribute('aria-expanded','false');
 }
-
-function handleNavClick(pageId) {
-    // 1. 페이지 전환
-    showPage(pageId);
-    
-    // 2. 모바일 드로어가 열려있다면 닫기 (모바일/데스크톱 공통 사용 시)
-    if (typeof closeDrawer === 'function') {
-        closeDrawer();
-    }
-    
-    // 3. (선택사항) 활성화된 메뉴 스타일 변경
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('text-brand'); // 활성 스타일 제거
-    });
-    const clickedBtn = document.getElementById('nav-' + pageId);
-    if (clickedBtn) {
-        clickedBtn.classList.add('text-brand'); // 활성 스타일 추가
-    }
+function toggleDrawer(){
+  var d = document.getElementById('drawer');
+  if(!d) return;
+  if(d.classList.contains('hidden')) openDrawer();
+  else closeDrawer();
 }
 document.addEventListener('keydown', function(e){
   if((e.key==='Escape'||e.key==='Esc')) closeDrawer();

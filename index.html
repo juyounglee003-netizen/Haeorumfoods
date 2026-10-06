@@ -98,6 +98,10 @@ header {
   .faq-chevron { transition:transform .3s cubic-bezier(0.22,1,0.36,1); }
 
   .inner-hero { min-height: 25.5rem; display: flex; align-items: center; padding-top: 6.75rem; padding-bottom: 5rem; }
+  .why-haeorum-section { background-color: #17181b; }
+  .page:not(#page-home) section:not(.inner-hero), #page-home > section:not(:first-of-type) { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+  @media(min-width:640px){ .page:not(#page-home) section:not(.inner-hero), #page-home > section:not(:first-of-type) { padding-top: 4rem !important; padding-bottom: 4rem !important; } }
+  @media(min-width:1024px){ .page:not(#page-home) section:not(.inner-hero), #page-home > section:not(:first-of-type) { padding-top: 5rem !important; padding-bottom: 5rem !important; } }
   @media(min-width:640px){ .inner-hero{ padding-top: 7.5rem; } }
   @media(min-width:1024px){ .inner-hero{ padding-top: 8.25rem; } }
 
@@ -375,7 +379,7 @@ header {
 </section>
 
 <!-- 3) Why Haeorum -->
-<section class="py-12 sm:py-16 lg:py-20 bg-[#17181b] text-white">
+<section class="why-haeorum-section py-12 sm:py-16 lg:py-20 text-white">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     <div class="mb-10 sm:mb-12">
       <span class="inline-block text-[14px] font-bold uppercase tracking-eyebrow text-brand-light">Why Haeorum</span>
@@ -2436,7 +2440,7 @@ END GALLERY -->
 </section>
 
 <!-- 제조 기준 -->
-<section class="border-y border-neutral-200 bg-white py-10 sm:py-12 lg:py-14">
+<section class="border-y border-neutral-200 bg-white">
   <div class="mx-auto w-full max-w-wide px-6 sm:px-10 lg:px-16">
     <div class="mb-8 max-w-3xl sm:mb-10">
       <span class="text-[14px] font-bold uppercase tracking-eyebrow text-brand">Production Standards</span>
